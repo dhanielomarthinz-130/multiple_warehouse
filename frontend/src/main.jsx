@@ -62,22 +62,29 @@ function ToastContainer({ toasts, removeToast }) {
 
 async function apiCall(path, options = {}) {
   const token = localStorage.getItem('token');
-  const res = await fetch(API + path, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: 'Bearer ' + token } : {}),
-      ...(options.headers || {})
-    }
-  });
+  let res;
+  try {
+    res = await fetch(API + path, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: 'Bearer ' + token } : {}),
+        ...(options.headers || {})
+      }
+    });
+  } catch (netErr) {
+    throw new Error('Gagal terhubung ke server. Pastikan server backend Render aktif atau periksa koneksi internet.');
+  }
 
   if (!res.ok) {
     const errData = await res.json().catch(() => ({}));
-    throw new Error(errData.message || 'Server request failed');
+    if (res.status === 404 && (API === '/api' || API.startsWith('/api'))) {
+      throw new Error('Server backend belum terhubung. Harap atur VITE_API_URL di Vercel Settings.');
+    }
+    throw new Error(errData.message || `Respon server error (${res.status}). Silakan coba lagi.`);
   }
 
-  const contentType = res.headers.get('content-type');
-  return contentType && contentType.includes('json') ? res.json() : res.text();
+  return res.json();
 }
 
 function Login({ onLogin }) {
