@@ -73,7 +73,7 @@ async function apiCall(path, options = {}) {
       }
     });
   } catch (netErr) {
-    throw new Error('Gagal terhubung ke server. Pastikan server backend Render aktif atau periksa koneksi internet.');
+    throw new Error('Gagal terhubung ke server. Periksa koneksi internet Anda.');
   }
 
   if (!res.ok) {
