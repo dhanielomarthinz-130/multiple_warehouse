@@ -72,11 +72,15 @@ async function apiCall(path, options = {}) {
 function Login({ onLogin }) {
   const [email, setEmail] = useState('jakarta@stockflow.local');
   const [password, setPassword] = useState('admin123');
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [roleFilter, setRoleFilter] = useState('all');
 
   async function handleLogin(e) {
     e?.preventDefault();
     setError('');
+    setLoading(true);
     try {
       const data = await apiCall('/auth/login', {
         method: 'POST',
@@ -85,7 +89,9 @@ function Login({ onLogin }) {
       localStorage.setItem('token', data.token);
       onLogin(data.user);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Login failed. Please check your credentials.');
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -94,70 +100,197 @@ function Login({ onLogin }) {
     setPassword('admin123');
   }
 
+  const demoAccounts = [
+    { name: 'Admin Jakarta', email: 'jakarta@stockflow.local', role: 'ADMIN', category: 'admin', location: 'Jakarta DC' },
+    { name: 'Admin Bekasi', email: 'bekasi@stockflow.local', role: 'ADMIN', category: 'admin', location: 'Bekasi Hub' },
+    { name: 'Admin Makassar', email: 'makassar@stockflow.local', role: 'ADMIN', category: 'admin', location: 'Makassar Hub' },
+    { name: 'Manager Jakarta', email: 'manager@stockflow.local', role: 'MANAGER', category: 'manager', location: 'Jakarta DC' },
+    { name: 'Manager Bekasi', email: 'manager_bekasi@stockflow.local', role: 'MANAGER', category: 'manager', location: 'Bekasi Hub' },
+    { name: 'Manager Makassar', email: 'manager_makassar@stockflow.local', role: 'MANAGER', category: 'manager', location: 'Makassar Hub' },
+    { name: 'Super Admin', email: 'admin@stockflow.local', role: 'GLOBAL', category: 'global', location: 'HQ Global' }
+  ];
+
+  const filteredAccounts = roleFilter === 'all' 
+    ? demoAccounts 
+    : demoAccounts.filter(a => a.category === roleFilter);
+
   return (
-    <div className="login-wrapper">
-      <div className="login-card">
-        <div className="brand-logo" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span className="material-symbols-outlined" style={{ fontSize: '32px', color: '#38bdf8' }}>inventory_2</span>
-          <span>STOCK FLOW <b className="badge-pro">PRO</b></span>
+    <div className="acumatica-login-container">
+      {/* Left Banner Section (Acumatica Enterprise Visual) */}
+      <div className="acumatica-banner">
+        <div className="banner-grid-overlay"></div>
+        <div className="banner-glow-orb orb-1"></div>
+        <div className="banner-glow-orb orb-2"></div>
+        
+        <div className="banner-content">
+          <div className="banner-brand">
+            <div className="brand-logo-icon">
+              <span className="material-symbols-outlined">inventory_2</span>
+            </div>
+            <div className="brand-titles">
+              <h1>STOCKFLOW <span>PRO</span></h1>
+              <p>CLOUD ERP & MULTI-WAREHOUSE CONTROL</p>
+            </div>
+          </div>
+
+          <div className="banner-hero-text">
+            <h2>Next-Gen Enterprise Inventory & Tiered Approval System</h2>
+            <p>Streamline multi-warehouse logistics, automate manager sign-offs, and monitor real-time stock turnover with precision analytics.</p>
+          </div>
+
+          <div className="banner-features">
+            <div className="feature-item">
+              <div className="feature-icon"><span className="material-symbols-outlined">verified_user</span></div>
+              <div>
+                <h4>Tiered Approval Workflow</h4>
+                <p>Granular manager authorization for inbound & outbound stock requests</p>
+              </div>
+            </div>
+
+            <div className="feature-item">
+              <div className="feature-icon"><span className="material-symbols-outlined">hub</span></div>
+              <div>
+                <h4>Multi-Warehouse Isolation</h4>
+                <p>Strict regional data governance across Jakarta, Bekasi, & Makassar hubs</p>
+              </div>
+            </div>
+
+            <div className="feature-item">
+              <div className="feature-icon"><span className="material-symbols-outlined">insights</span></div>
+              <div>
+                <h4>Days of Inventory (DOI) Analytics</h4>
+                <p>AI-driven stockout risk alerts & automated reorder point calculation</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="banner-footer-badge">
+            <span className="status-dot"></span>
+            <span>Cloud Infrastructure Active • v2.4 Enterprise Build</span>
+          </div>
         </div>
-        <h2>Enterprise Inventory Portal</h2>
-        <p className="subtitle">Tiered Manager Approval & Multi-Warehouse Control</p>
+      </div>
 
-        {error && <div className="error-alert"><span className="material-symbols-outlined">warning</span> {error}</div>}
-
-        <form onSubmit={handleLogin}>
-          <div className="form-group">
-            <label>Email Address</label>
-            <input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              placeholder="user@stockflow.local"
-              required
-            />
+      {/* Right Login Form Section */}
+      <div className="acumatica-form-section">
+        <div className="form-card">
+          <div className="form-header">
+            <div className="mobile-brand">
+              <span className="material-symbols-outlined" style={{ fontSize: '28px', color: 'var(--primary)' }}>inventory_2</span>
+              <span>STOCKFLOW <b>PRO</b></span>
+            </div>
+            <h3>Sign in to Workspace</h3>
+            <p>Enter your enterprise credentials to access your warehouse portal</p>
           </div>
 
-          <div className="form-group">
-            <label>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-            />
+          {error && (
+            <div className="acumatica-alert error">
+              <span className="material-symbols-outlined">error</span>
+              <div>{error}</div>
+            </div>
+          )}
+
+          <form onSubmit={handleLogin} className="login-form-body">
+            <div className="input-field-group">
+              <label>User Identity / Email</label>
+              <div className="input-with-icon">
+                <span className="material-symbols-outlined field-icon">account_circle</span>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="user@stockflow.local"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="input-field-group">
+              <div className="label-row">
+                <label>Password</label>
+                <a href="#forgot" onClick={(e) => { e.preventDefault(); alert('Default test password for all accounts is: admin123'); }} className="forgot-link">Forgot Password?</a>
+              </div>
+              <div className="input-with-icon">
+                <span className="material-symbols-outlined field-icon">lock</span>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                />
+                <button
+                  type="button"
+                  className="password-toggle-btn"
+                  onClick={() => setShowPassword(!showPassword)}
+                  title={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  <span className="material-symbols-outlined">{showPassword ? 'visibility_off' : 'visibility'}</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="form-options">
+              <label className="remember-me">
+                <input type="checkbox" defaultChecked />
+                <span>Keep me signed in on this device</span>
+              </label>
+            </div>
+
+            <button type="submit" className="acumatica-submit-btn" disabled={loading}>
+              {loading ? (
+                <>
+                  <span className="spinner-icon"></span> AUTHENTICATING...
+                </>
+              ) : (
+                <>
+                  <span className="material-symbols-outlined">login</span> SIGN IN TO WORKSPACE
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Quick Demo Switcher Section */}
+          <div className="quick-demo-section">
+            <div className="demo-section-header">
+              <span><span className="material-symbols-outlined">badge</span> Quick Demo Accounts:</span>
+              <div className="role-filter-tabs">
+                <button type="button" className={roleFilter === 'all' ? 'active' : ''} onClick={() => setRoleFilter('all')}>All</button>
+                <button type="button" className={roleFilter === 'admin' ? 'active' : ''} onClick={() => setRoleFilter('admin')}>Admins</button>
+                <button type="button" className={roleFilter === 'manager' ? 'active' : ''} onClick={() => setRoleFilter('manager')}>Managers</button>
+                <button type="button" className={roleFilter === 'global' ? 'active' : ''} onClick={() => setRoleFilter('global')}>Global</button>
+              </div>
+            </div>
+
+            <div className="demo-chips-grid">
+              {filteredAccounts.map((acc, idx) => {
+                const isSelected = email === acc.email;
+                return (
+                  <button
+                    key={idx}
+                    type="button"
+                    className={`demo-account-card ${isSelected ? 'selected' : ''}`}
+                    onClick={() => quickSelectRole(acc.email)}
+                  >
+                    <div className="chip-icon">
+                      <span className="material-symbols-outlined">
+                        {acc.role === 'GLOBAL' ? 'admin_panel_settings' : acc.role === 'MANAGER' ? 'manage_accounts' : 'storefront'}
+                      </span>
+                    </div>
+                    <div className="chip-info">
+                      <div className="chip-name">{acc.name}</div>
+                      <div className="chip-loc">{acc.location}</div>
+                    </div>
+                    {isSelected && <span className="material-symbols-outlined check-icon">check_circle</span>}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          <button type="submit" className="btn-primary btn-block">
-            <span className="material-symbols-outlined">login</span> LOG IN TO SYSTEM
-          </button>
-        </form>
-
-        <div className="demo-credentials">
-          <p className="demo-title"><span className="material-symbols-outlined" style={{ fontSize: '18px', verticalAlign: 'middle', marginRight: '6px', color: 'var(--primary)' }}>key</span> Quick Demo Accounts (Test Multi-Warehouse Isolation):</p>
-          <div className="role-buttons" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-            <button type="button" className={`role-chip ${email.includes('jakarta') ? 'active' : ''}`} onClick={() => quickSelectRole('jakarta@stockflow.local')}>
-              <span className="material-symbols-outlined">storefront</span> Admin Gudang A (Jakarta)
-            </button>
-            <button type="button" className={`role-chip ${email.includes('bekasi@') ? 'active' : ''}`} onClick={() => quickSelectRole('bekasi@stockflow.local')}>
-              <span className="material-symbols-outlined">storefront</span> Admin Gudang B (Bekasi)
-            </button>
-            <button type="button" className={`role-chip ${email.includes('makassar@') ? 'active' : ''}`} onClick={() => quickSelectRole('makassar@stockflow.local')}>
-              <span className="material-symbols-outlined">storefront</span> Admin Gudang C (Makassar)
-            </button>
-            <button type="button" className={`role-chip ${email === 'manager@stockflow.local' ? 'active' : ''}`} onClick={() => quickSelectRole('manager@stockflow.local')}>
-              <span className="material-symbols-outlined">manage_accounts</span> Manager Gudang A (Jakarta)
-            </button>
-            <button type="button" className={`role-chip ${email.includes('manager_bekasi') ? 'active' : ''}`} onClick={() => quickSelectRole('manager_bekasi@stockflow.local')}>
-              <span className="material-symbols-outlined">manage_accounts</span> Manager Gudang B (Bekasi)
-            </button>
-            <button type="button" className={`role-chip ${email.includes('manager_makassar') ? 'active' : ''}`} onClick={() => quickSelectRole('manager_makassar@stockflow.local')}>
-              <span className="material-symbols-outlined">manage_accounts</span> Manager Gudang C (Makassar)
-            </button>
-            <button type="button" className={`role-chip ${email.includes('admin@') ? 'active' : ''}`} onClick={() => quickSelectRole('admin@stockflow.local')}>
-              <span className="material-symbols-outlined">admin_panel_settings</span> Super Admin (Global)
-            </button>
+          <div className="acumatica-form-footer">
+            <p>StockFlow Pro ERP System • Integrated Multi-Warehouse Management</p>
+            <p className="copyright">© 2026 StockFlow Corporation. All Rights Reserved.</p>
           </div>
         </div>
       </div>
