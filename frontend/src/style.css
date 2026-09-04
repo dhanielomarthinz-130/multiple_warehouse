@@ -3067,8 +3067,11 @@ input:focus, select:focus {
 
 .select-wrapper select {
   width: 100%;
-  padding: 10px 36px 10px 12px;
-  background: #ffffff;
+  height: 42px !important;
+  line-height: 20px !important;
+  padding: 10px 36px 10px 12px !important;
+  background-image: none !important;
+  background-color: #ffffff !important;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
   color: #0f172a;
@@ -3076,7 +3079,10 @@ input:focus, select:focus {
   font-weight: 500;
   outline: none;
   appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
   cursor: pointer;
+  box-sizing: border-box;
 }
 
 .select-wrapper select:focus {
@@ -3160,13 +3166,16 @@ input:focus, select:focus {
 
 .input-group input {
   width: 100%;
-  padding: 11px 40px 11px 38px;
-  background: #ffffff;
+  height: 42px !important;
+  line-height: 20px !important;
+  padding: 10px 40px 10px 38px !important;
+  background: #ffffff !important;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
   color: #0f172a;
   font-size: 14px;
   outline: none;
+  box-sizing: border-box;
   transition: border-color 0.15s ease;
 }
 
