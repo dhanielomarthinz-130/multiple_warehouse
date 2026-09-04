@@ -303,7 +303,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [warehouses, setWarehouses] = useState([]);
   const [selectedWarehouse, setSelectedWarehouse] = useState('all');
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
   const [collapsed, setCollapsed] = useState(false);
   const [toasts, setToasts] = useState([]);
 
