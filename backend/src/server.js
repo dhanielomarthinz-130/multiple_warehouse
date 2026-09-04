@@ -10,6 +10,15 @@ app.use(express.json());
 
 const SECRET = process.env.JWT_SECRET || 'stockflow_pro_secret';
 
+// Health Check Endpoints
+app.get('/', (req, res) => {
+  res.json({ status: 'ok', service: 'STOCKFLOW PRO API', timestamp: new Date() });
+});
+
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', service: 'STOCKFLOW PRO API', timestamp: new Date() });
+});
+
 // Database helper functions
 const q = (sql, ...args) => db.prepare(sql).all(...args);
 const one = (sql, ...args) => db.prepare(sql).get(...args);
