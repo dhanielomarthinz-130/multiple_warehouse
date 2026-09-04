@@ -75,7 +75,16 @@ function Login({ onLogin }) {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [roleFilter, setRoleFilter] = useState('all');
+
+  const demoAccounts = [
+    { label: 'Admin Gudang A (Jakarta DC)', email: 'jakarta@stockflow.local', role: 'WAREHOUSE_ADMIN' },
+    { label: 'Admin Gudang B (Bekasi Hub)', email: 'bekasi@stockflow.local', role: 'WAREHOUSE_ADMIN' },
+    { label: 'Admin Gudang C (Makassar Hub)', email: 'makassar@stockflow.local', role: 'WAREHOUSE_ADMIN' },
+    { label: 'Manager Gudang A (Jakarta DC)', email: 'manager@stockflow.local', role: 'MANAGER' },
+    { label: 'Manager Gudang B (Bekasi Hub)', email: 'manager_bekasi@stockflow.local', role: 'MANAGER' },
+    { label: 'Manager Gudang C (Makassar Hub)', email: 'manager_makassar@stockflow.local', role: 'MANAGER' },
+    { label: 'Super Admin (Global HQ)', email: 'admin@stockflow.local', role: 'SUPER_ADMIN' }
+  ];
 
   async function handleLogin(e) {
     e?.preventDefault();
@@ -89,211 +98,200 @@ function Login({ onLogin }) {
       localStorage.setItem('token', data.token);
       onLogin(data.user);
     } catch (err) {
-      setError(err.message || 'Login failed. Please check your credentials.');
+      setError(err.message || 'Gagal masuk. Periksa kembali email & kata sandi Anda.');
     } finally {
       setLoading(false);
     }
   }
 
-  function quickSelectRole(targetEmail) {
-    setEmail(targetEmail);
-    setPassword('admin123');
+  function handleSelectAccountChange(e) {
+    const val = e.target.value;
+    if (val) {
+      setEmail(val);
+      setPassword('admin123');
+    }
   }
 
-  const demoAccounts = [
-    { name: 'Admin Jakarta', email: 'jakarta@stockflow.local', role: 'ADMIN', category: 'admin', location: 'Jakarta DC' },
-    { name: 'Admin Bekasi', email: 'bekasi@stockflow.local', role: 'ADMIN', category: 'admin', location: 'Bekasi Hub' },
-    { name: 'Admin Makassar', email: 'makassar@stockflow.local', role: 'ADMIN', category: 'admin', location: 'Makassar Hub' },
-    { name: 'Manager Jakarta', email: 'manager@stockflow.local', role: 'MANAGER', category: 'manager', location: 'Jakarta DC' },
-    { name: 'Manager Bekasi', email: 'manager_bekasi@stockflow.local', role: 'MANAGER', category: 'manager', location: 'Bekasi Hub' },
-    { name: 'Manager Makassar', email: 'manager_makassar@stockflow.local', role: 'MANAGER', category: 'manager', location: 'Makassar Hub' },
-    { name: 'Super Admin', email: 'admin@stockflow.local', role: 'GLOBAL', category: 'global', location: 'HQ Global' }
-  ];
-
-  const filteredAccounts = roleFilter === 'all' 
-    ? demoAccounts 
-    : demoAccounts.filter(a => a.category === roleFilter);
-
   return (
-    <div className="acumatica-login-container">
-      {/* Left Banner Section (Acumatica Enterprise Visual) */}
-      <div className="acumatica-banner">
-        <div className="banner-grid-overlay"></div>
-        <div className="banner-glow-orb orb-1"></div>
-        <div className="banner-glow-orb orb-2"></div>
-        
-        <div className="banner-content">
-          <div className="banner-brand">
-            <div className="brand-logo-icon">
-              <span className="material-symbols-outlined">inventory_2</span>
-            </div>
-            <div className="brand-titles">
-              <h1>STOCKFLOW <span>PRO</span></h1>
-              <p>CLOUD ERP & MULTI-WAREHOUSE CONTROL</p>
-            </div>
+    <div className="erp-login-page">
+      {/* Top Header Bar */}
+      <header className="erp-login-header">
+        <div className="erp-brand-logo">
+          <div className="logo-icon-box">
+            <span className="material-symbols-outlined">inventory_2</span>
           </div>
-
-          <div className="banner-hero-text">
-            <h2>Next-Gen Enterprise Inventory & Tiered Approval System</h2>
-            <p>Streamline multi-warehouse logistics, automate manager sign-offs, and monitor real-time stock turnover with precision analytics.</p>
-          </div>
-
-          <div className="banner-features">
-            <div className="feature-item">
-              <div className="feature-icon"><span className="material-symbols-outlined">verified_user</span></div>
-              <div>
-                <h4>Tiered Approval Workflow</h4>
-                <p>Granular manager authorization for inbound & outbound stock requests</p>
-              </div>
-            </div>
-
-            <div className="feature-item">
-              <div className="feature-icon"><span className="material-symbols-outlined">hub</span></div>
-              <div>
-                <h4>Multi-Warehouse Isolation</h4>
-                <p>Strict regional data governance across Jakarta, Bekasi, & Makassar hubs</p>
-              </div>
-            </div>
-
-            <div className="feature-item">
-              <div className="feature-icon"><span className="material-symbols-outlined">insights</span></div>
-              <div>
-                <h4>Days of Inventory (DOI) Analytics</h4>
-                <p>AI-driven stockout risk alerts & automated reorder point calculation</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="banner-footer-badge">
-            <span className="status-dot"></span>
-            <span>Cloud Infrastructure Active • v2.4 Enterprise Build</span>
+          <div className="logo-text">
+            <span className="brand-name">STOCKFLOW <strong>PRO</strong></span>
+            <span className="brand-sub">Enterprise Multi-Warehouse ERP</span>
           </div>
         </div>
-      </div>
 
-      {/* Right Login Form Section */}
-      <div className="acumatica-form-section">
-        <div className="form-card">
-          <div className="form-header">
-            <div className="mobile-brand">
-              <span className="material-symbols-outlined" style={{ fontSize: '28px', color: 'var(--primary)' }}>inventory_2</span>
-              <span>STOCKFLOW <b>PRO</b></span>
+        <div className="header-meta">
+          <span className="env-badge"><span className="pulse-dot"></span> System Status: Online</span>
+          <span className="version-label">v2.4 Enterprise</span>
+        </div>
+      </header>
+
+      {/* Main Content Body */}
+      <main className="erp-login-body">
+        {/* Left Side: Enterprise System Overview */}
+        <div className="erp-hero-panel">
+          <div className="hero-badge">CLOUD ERP WORKSPACE</div>
+          <h1 className="hero-title">Multi-Warehouse Operations & Authorization Portal</h1>
+          <p className="hero-desc">
+            Sistem manajemen persediaan terintegrasi dengan kontrol otorisasi bertingkat, pemantauan stok real-time antar gudang, serta analitik Days of Inventory (DOI).
+          </p>
+
+          <div className="hero-feature-cards">
+            <div className="hero-card-item">
+              <div className="item-icon">
+                <span className="material-symbols-outlined">verified_user</span>
+              </div>
+              <div className="item-body">
+                <h3>Otorisasi Tiered Manager Approval</h3>
+                <p>Verifikasi & persetujuan dokumen Purchase Order (PO) serta Inbound/Outbound oleh Manager gudang.</p>
+              </div>
             </div>
-            <h3>Sign in to Workspace</h3>
-            <p>Enter your enterprise credentials to access your warehouse portal</p>
+
+            <div className="hero-card-item">
+              <div className="item-icon">
+                <span className="material-symbols-outlined">hub</span>
+              </div>
+              <div className="item-body">
+                <h3>Isolasi Data Antar Gudang</h3>
+                <p>Proteksi data ketat antar cabang Jakarta DC, Bekasi Hub, dan Makassar Hub.</p>
+              </div>
+            </div>
+
+            <div className="hero-card-item">
+              <div className="item-icon">
+                <span className="material-symbols-outlined">analytics</span>
+              </div>
+              <div className="item-body">
+                <h3>Analitik Pergantian Stok (DOI)</h3>
+                <p>Deteksi dini resiko kehabisan stok (stockout) dan rekomendasi otomatis titik reorder.</p>
+              </div>
+            </div>
           </div>
 
-          {error && (
-            <div className="acumatica-alert error">
-              <span className="material-symbols-outlined">error</span>
-              <div>{error}</div>
-            </div>
-          )}
+          <div className="hero-footer-info">
+            <span>Terhubung aman via SSL 256-bit • Terintegrasi dengan PostgreSQL Cloud</span>
+          </div>
+        </div>
 
-          <form onSubmit={handleLogin} className="login-form-body">
-            <div className="input-field-group">
-              <label>User Identity / Email</label>
-              <div className="input-with-icon">
-                <span className="material-symbols-outlined field-icon">account_circle</span>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  placeholder="user@stockflow.local"
-                  required
-                />
-              </div>
+        {/* Right Side: Professional Clean Login Box */}
+        <div className="erp-form-panel">
+          <div className="login-box">
+            <div className="login-box-header">
+              <h2>Masuk ke Akun Anda</h2>
+              <p>Masukkan kredensial pengguna untuk mengakses portal manajemen</p>
             </div>
 
-            <div className="input-field-group">
-              <div className="label-row">
-                <label>Password</label>
-                <a href="#forgot" onClick={(e) => { e.preventDefault(); alert('Default test password for all accounts is: admin123'); }} className="forgot-link">Forgot Password?</a>
-              </div>
-              <div className="input-with-icon">
-                <span className="material-symbols-outlined field-icon">lock</span>
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  required
-                />
-                <button
-                  type="button"
-                  className="password-toggle-btn"
-                  onClick={() => setShowPassword(!showPassword)}
-                  title={showPassword ? 'Hide password' : 'Show password'}
-                >
-                  <span className="material-symbols-outlined">{showPassword ? 'visibility_off' : 'visibility'}</span>
-                </button>
-              </div>
-            </div>
-
-            <div className="form-options">
-              <label className="remember-me">
-                <input type="checkbox" defaultChecked />
-                <span>Keep me signed in on this device</span>
+            {/* Quick Demo Account Selector Dropdown */}
+            <div className="quick-account-selector">
+              <label htmlFor="demo-select">
+                <span className="material-symbols-outlined">key</span> Pilih Akun Demo (Quick Login):
               </label>
-            </div>
-
-            <button type="submit" className="acumatica-submit-btn" disabled={loading}>
-              {loading ? (
-                <>
-                  <span className="spinner-icon"></span> AUTHENTICATING...
-                </>
-              ) : (
-                <>
-                  <span className="material-symbols-outlined">login</span> SIGN IN TO WORKSPACE
-                </>
-              )}
-            </button>
-          </form>
-
-          {/* Quick Demo Switcher Section */}
-          <div className="quick-demo-section">
-            <div className="demo-section-header">
-              <span><span className="material-symbols-outlined">badge</span> Quick Demo Accounts:</span>
-              <div className="role-filter-tabs">
-                <button type="button" className={roleFilter === 'all' ? 'active' : ''} onClick={() => setRoleFilter('all')}>All</button>
-                <button type="button" className={roleFilter === 'admin' ? 'active' : ''} onClick={() => setRoleFilter('admin')}>Admins</button>
-                <button type="button" className={roleFilter === 'manager' ? 'active' : ''} onClick={() => setRoleFilter('manager')}>Managers</button>
-                <button type="button" className={roleFilter === 'global' ? 'active' : ''} onClick={() => setRoleFilter('global')}>Global</button>
+              <div className="select-wrapper">
+                <select
+                  id="demo-select"
+                  value={email}
+                  onChange={handleSelectAccountChange}
+                >
+                  {demoAccounts.map((acc, i) => (
+                    <option key={i} value={acc.email}>
+                      {acc.label} ({acc.email})
+                    </option>
+                  ))}
+                </select>
+                <span className="material-symbols-outlined select-arrow">expand_more</span>
               </div>
             </div>
 
-            <div className="demo-chips-grid">
-              {filteredAccounts.map((acc, idx) => {
-                const isSelected = email === acc.email;
-                return (
-                  <button
-                    key={idx}
-                    type="button"
-                    className={`demo-account-card ${isSelected ? 'selected' : ''}`}
-                    onClick={() => quickSelectRole(acc.email)}
+            {error && (
+              <div className="login-error-msg">
+                <span className="material-symbols-outlined">warning</span>
+                <span>{error}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleLogin} className="login-form">
+              <div className="form-field">
+                <label>Email / User ID</label>
+                <div className="input-group">
+                  <span className="material-symbols-outlined input-icon">person</span>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    placeholder="nama@stockflow.local"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="form-field">
+                <div className="label-row">
+                  <label>Kata Sandi</label>
+                  <a
+                    href="#forgot"
+                    onClick={e => {
+                      e.preventDefault();
+                      alert('Password default untuk semua akun tes adalah: admin123');
+                    }}
+                    className="forgot-password"
                   >
-                    <div className="chip-icon">
-                      <span className="material-symbols-outlined">
-                        {acc.role === 'GLOBAL' ? 'admin_panel_settings' : acc.role === 'MANAGER' ? 'manage_accounts' : 'storefront'}
-                      </span>
-                    </div>
-                    <div className="chip-info">
-                      <div className="chip-name">{acc.name}</div>
-                      <div className="chip-loc">{acc.location}</div>
-                    </div>
-                    {isSelected && <span className="material-symbols-outlined check-icon">check_circle</span>}
+                    Lupa password?
+                  </a>
+                </div>
+                <div className="input-group">
+                  <span className="material-symbols-outlined input-icon">lock</span>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="toggle-pwd-btn"
+                    onClick={() => setShowPassword(!showPassword)}
+                    title={showPassword ? 'Sembunyikan' : 'Tampilkan'}
+                  >
+                    <span className="material-symbols-outlined">
+                      {showPassword ? 'visibility_off' : 'visibility'}
+                    </span>
                   </button>
-                );
-              })}
+                </div>
+              </div>
+
+              <div className="form-extra">
+                <label className="checkbox-label">
+                  <input type="checkbox" defaultChecked />
+                  <span>Ingat saya di perangkat ini</span>
+                </label>
+              </div>
+
+              <button type="submit" className="login-submit-btn" disabled={loading}>
+                {loading ? (
+                  <>
+                    <span className="btn-spinner"></span> Memverifikasi...
+                  </>
+                ) : (
+                  <>
+                    <span className="material-symbols-outlined">login</span> MASUK KE SISTEM
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="login-box-footer">
+              <p>© 2026 StockFlow Pro. Hak Cipta Dilindungi Undang-Undang.</p>
             </div>
           </div>
-
-          <div className="acumatica-form-footer">
-            <p>StockFlow Pro ERP System • Integrated Multi-Warehouse Management</p>
-            <p className="copyright">© 2026 StockFlow Corporation. All Rights Reserved.</p>
-          </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

@@ -2795,292 +2795,333 @@ input:focus, select:focus {
 }
 
 /* ============================================================================
-   ACUMATICA ENTERPRISE ERP LOGIN PAGE STYLING
+   HUMAN-DESIGNED ACUMATICA ENTERPRISE ERP LOGIN PAGE
    ============================================================================ */
 
-.acumatica-login-container {
-  display: flex;
+.erp-login-page {
   min-height: 100vh;
   width: 100vw;
-  background: #090d16;
+  background: #0f172a;
   color: #f8fafc;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  display: flex;
+  flex-direction: column;
   overflow-x: hidden;
 }
 
-/* --- Left Banner Section (Acumatica Enterprise Visual) --- */
-.acumatica-banner {
-  flex: 1.25;
-  position: relative;
-  background: linear-gradient(135deg, #090d16 0%, #0f172a 45%, #1e1b4b 100%);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 64px 72px;
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-  overflow: hidden;
-}
-
-.banner-grid-overlay {
-  position: absolute;
-  inset: 0;
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-}
-
-.banner-glow-orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(100px);
-  pointer-events: none;
-  opacity: 0.4;
-}
-
-.orb-1 {
-  width: 350px;
-  height: 350px;
-  background: #2563eb;
-  top: -80px;
-  left: -80px;
-}
-
-.orb-2 {
-  width: 400px;
-  height: 400px;
-  background: #7c3aed;
-  bottom: -100px;
-  right: -100px;
-}
-
-.banner-content {
-  position: relative;
-  z-index: 2;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 40px;
-}
-
-.banner-brand {
+/* Header Bar */
+.erp-login-header {
+  height: 64px;
+  padding: 0 36px;
+  background: #1e293b;
+  border-bottom: 1px solid #334155;
   display: flex;
   align-items: center;
-  gap: 16px;
+  justify-content: space-between;
+  z-index: 10;
 }
 
-.brand-logo-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+.erp-brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.4);
-}
-
-.brand-logo-icon span {
-  font-size: 30px;
   color: #ffffff;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
 }
 
-.brand-titles h1 {
-  font-size: 26px;
-  font-weight: 900;
-  letter-spacing: -0.5px;
-  margin: 0;
-  color: #ffffff;
-  line-height: 1;
+.logo-text {
+  display: flex;
+  flex-direction: column;
 }
 
-.brand-titles h1 span {
-  background: linear-gradient(90deg, #38bdf8, #818cf8);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.brand-titles p {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  color: #94a3b8;
-  margin: 4px 0 0 0;
-}
-
-.banner-hero-text h2 {
-  font-size: 32px;
+.brand-name {
+  font-size: 16px;
   font-weight: 800;
-  line-height: 1.25;
-  color: #f8fafc;
-  letter-spacing: -0.8px;
-  margin-bottom: 12px;
+  color: #ffffff;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
 }
 
-.banner-hero-text p {
-  font-size: 15px;
+.brand-name strong {
+  color: #38bdf8;
+}
+
+.brand-sub {
+  font-size: 10px;
+  font-weight: 600;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.header-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 12px;
+}
+
+.env-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #34d399;
+  border-radius: 99px;
+  font-weight: 600;
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+}
+
+.version-label {
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* Main Layout Body */
+.erp-login-body {
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+}
+
+/* Left Hero Section */
+.erp-hero-panel {
+  flex: 1.2;
+  padding: 56px 64px;
+  background: radial-gradient(ellipse at top left, #1e293b 0%, #0f172a 70%);
+  border-right: 1px solid #334155;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hero-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.1);
+  padding: 4px 10px;
+  border-radius: 6px;
+  width: fit-content;
+  margin-bottom: 16px;
+}
+
+.hero-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.3;
+  margin: 0 0 12px 0;
+  letter-spacing: -0.5px;
+}
+
+.hero-desc {
+  font-size: 14px;
   color: #94a3b8;
   line-height: 1.6;
   max-width: 540px;
-  margin: 0;
+  margin: 0 0 36px 0;
 }
 
-.banner-features {
+.hero-feature-cards {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 14px;
+  max-width: 560px;
 }
 
-.feature-item {
+.hero-card-item {
   display: flex;
   align-items: flex-start;
   gap: 16px;
   padding: 16px 20px;
-  background: rgba(30, 41, 59, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
-  border-radius: 16px;
-  transition: all 0.25s ease;
-}
-
-.feature-item:hover {
-  background: rgba(30, 41, 59, 0.65);
-  border-color: rgba(56, 189, 248, 0.3);
-  transform: translateX(4px);
-}
-
-.feature-icon {
-  width: 40px;
-  height: 40px;
+  background: #1e293b;
+  border: 1px solid #334155;
   border-radius: 12px;
-  background: rgba(56, 189, 248, 0.12);
-  border: 1px solid rgba(56, 189, 248, 0.25);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.hero-card-item:hover {
+  border-color: #3b82f6;
+  transform: translateX(3px);
+}
+
+.item-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(37, 99, 235, 0.15);
+  color: #60a5fa;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #38bdf8;
   flex-shrink: 0;
 }
 
-.feature-item h4 {
+.item-icon span {
+  font-size: 20px;
+}
+
+.item-body h3 {
   font-size: 14px;
   font-weight: 700;
   color: #f1f5f9;
   margin: 0 0 4px 0;
 }
 
-.feature-item p {
-  font-size: 13px;
+.item-body p {
+  font-size: 12px;
   color: #94a3b8;
   margin: 0;
   line-height: 1.4;
 }
 
-.banner-footer-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
+.hero-footer-info {
+  margin-top: 40px;
   font-size: 12px;
-  color: #94a3b8;
-  padding: 8px 16px;
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 99px;
-  width: fit-content;
+  color: #64748b;
 }
 
-.status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #10b981;
-  box-shadow: 0 0 10px #10b981;
-}
-
-/* --- Right Form Section --- */
-.acumatica-form-section {
+/* Right Login Form Section */
+.erp-form-panel {
   flex: 1;
+  padding: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 32px;
-  background: #0b0f19;
-  position: relative;
-  overflow-y: auto;
+  background: #0f172a;
 }
 
-.form-card {
+.login-box {
   width: 100%;
-  max-width: 460px;
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6);
-  border-radius: 24px;
-  padding: 40px;
-  backdrop-filter: blur(20px);
+  max-width: 440px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 16px;
+  padding: 36px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
 }
 
-.mobile-brand {
-  display: none;
-  align-items: center;
-  gap: 8px;
-  font-size: 18px;
-  font-weight: 800;
-  color: #fff;
-  margin-bottom: 20px;
-}
-
-.form-header h3 {
-  font-size: 24px;
+.login-box-header h2 {
+  font-size: 22px;
   font-weight: 800;
   color: #ffffff;
-  letter-spacing: -0.5px;
   margin: 0 0 6px 0;
+  letter-spacing: -0.4px;
 }
 
-.form-header p {
+.login-box-header p {
   font-size: 13px;
   color: #94a3b8;
   margin: 0 0 24px 0;
 }
 
-/* Alerts */
-.acumatica-alert {
+/* Quick Account Selector Dropdown */
+.quick-account-selector {
+  margin-bottom: 24px;
+  padding: 14px 16px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 10px;
+}
+
+.quick-account-selector label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #38bdf8;
+  margin-bottom: 8px;
+}
+
+.quick-account-selector label span {
+  font-size: 16px;
+}
+
+.select-wrapper {
+  position: relative;
+}
+
+.select-wrapper select {
+  width: 100%;
+  padding: 10px 36px 10px 12px;
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.select-wrapper select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.select-arrow {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+  font-size: 20px;
+}
+
+/* Error Alert */
+.login-error-msg {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 16px;
-  border-radius: 12px;
+  padding: 12px 14px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  color: #fca5a5;
   font-size: 13px;
   margin-bottom: 20px;
 }
 
-.acumatica-alert.error {
-  background: rgba(239, 68, 68, 0.12);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #fca5a5;
-}
-
-/* Form Inputs */
-.login-form-body {
+/* Form Fields */
+.login-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
 }
 
-.input-field-group {
+.form-field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
-.input-field-group label {
-  font-size: 11px;
+.form-field label {
+  font-size: 12px;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
   color: #cbd5e1;
 }
 
@@ -3090,58 +3131,51 @@ input:focus, select:focus {
   align-items: center;
 }
 
-.forgot-link {
+.forgot-password {
   font-size: 12px;
   color: #38bdf8;
   text-decoration: none;
   font-weight: 600;
-  transition: color 0.15s ease;
 }
 
-.forgot-link:hover {
-  color: #60a5fa;
+.forgot-password:hover {
   text-decoration: underline;
 }
 
-.input-with-icon {
+.input-group {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-.field-icon {
+.input-icon {
   position: absolute;
-  left: 14px;
+  left: 12px;
   color: #64748b;
-  font-size: 20px;
+  font-size: 18px;
   pointer-events: none;
 }
 
-.input-with-icon input {
+.input-group input {
   width: 100%;
-  padding: 13px 44px 13px 44px;
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
+  padding: 11px 40px 11px 38px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
   color: #ffffff;
   font-size: 14px;
   outline: none;
-  transition: all 0.2s ease;
+  transition: border-color 0.15s ease;
 }
 
-.input-with-icon input::placeholder {
-  color: #475569;
-}
-
-.input-with-icon input:focus {
-  background: rgba(30, 41, 59, 0.9);
+.input-group input:focus {
   border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
-.password-toggle-btn {
+.toggle-pwd-btn {
   position: absolute;
-  right: 12px;
+  right: 10px;
   background: none;
   border: none;
   color: #64748b;
@@ -3150,253 +3184,90 @@ input:focus, select:focus {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
-  transition: color 0.15s ease;
 }
 
-.password-toggle-btn:hover {
+.toggle-pwd-btn:hover {
   color: #94a3b8;
 }
 
-.password-toggle-btn span {
-  font-size: 20px;
-}
-
-/* Options */
-.form-options {
+.form-extra {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.remember-me {
+.checkbox-label {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 13px;
   color: #94a3b8;
   cursor: pointer;
-  user-select: none;
 }
 
-.remember-me input[type="checkbox"] {
+.checkbox-label input {
   accent-color: #2563eb;
-  width: 16px;
-  height: 16px;
-  border-radius: 4px;
 }
 
 /* Submit Button */
-.acumatica-submit-btn {
+.login-submit-btn {
   width: 100%;
-  padding: 14px;
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
+  padding: 12px;
+  background: #2563eb;
   color: #ffffff;
   font-size: 14px;
   font-weight: 700;
-  letter-spacing: 0.5px;
+  border-radius: 8px;
+  border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4);
-  transition: all 0.2s ease;
+  transition: background 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: #1d4ed8;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 }
 
-.acumatica-submit-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 14px 25px -5px rgba(37, 99, 235, 0.5);
-}
-
-.acumatica-submit-btn:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.acumatica-submit-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.spinner-icon {
-  width: 18px;
-  height: 18px;
+.btn-spinner {
+  width: 16px;
+  height: 16px;
   border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: #ffffff;
+  border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* Quick Demo Switcher Section */
-.quick-demo-section {
-  margin-top: 28px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.demo-section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  font-size: 12px;
-  font-weight: 700;
-  color: #94a3b8;
-}
-
-.demo-section-header span {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.role-filter-tabs {
-  display: flex;
-  gap: 4px;
-  background: rgba(30, 41, 59, 0.6);
-  padding: 3px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.role-filter-tabs button {
-  background: none;
-  border: none;
-  color: #64748b;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 4px 8px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.role-filter-tabs button.active {
-  background: #3b82f6;
-  color: #ffffff;
-}
-
-.demo-chips-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  max-height: 180px;
-  overflow-y: auto;
-  padding-right: 4px;
-}
-
-.demo-chips-grid::-webkit-scrollbar {
-  width: 4px;
-}
-
-.demo-chips-grid::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
-}
-
-.demo-account-card {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 10px;
-  background: rgba(30, 41, 59, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  cursor: pointer;
-  text-align: left;
-  transition: all 0.15s ease;
-  position: relative;
-}
-
-.demo-account-card:hover {
-  background: rgba(30, 41, 59, 0.8);
-  border-color: rgba(56, 189, 248, 0.3);
-}
-
-.demo-account-card.selected {
-  background: rgba(37, 99, 235, 0.2);
-  border-color: #3b82f6;
-}
-
-.chip-icon {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.06);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #38bdf8;
-  flex-shrink: 0;
-}
-
-.demo-account-card.selected .chip-icon {
-  background: #2563eb;
-  color: #ffffff;
-}
-
-.chip-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.chip-name {
-  font-size: 11px;
-  font-weight: 700;
-  color: #f1f5f9;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.chip-loc {
-  font-size: 10px;
-  color: #64748b;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.check-icon {
-  font-size: 16px;
-  color: #38bdf8;
-}
-
-.acumatica-form-footer {
+.login-box-footer {
   margin-top: 24px;
   text-align: center;
   font-size: 11px;
   color: #64748b;
 }
 
-.acumatica-form-footer .copyright {
-  font-size: 10px;
-  color: #475569;
-  margin-top: 4px;
-}
-
-/* Responsive Media Queries */
-@media (max-width: 1024px) {
-  .acumatica-banner {
+/* Responsive Rules */
+@media (max-width: 900px) {
+  .erp-hero-panel {
     display: none;
   }
-  .mobile-brand {
-    display: flex;
-  }
-  .acumatica-form-section {
+  .erp-form-panel {
     padding: 24px 16px;
   }
-  .form-card {
-    padding: 28px 20px;
+  .erp-login-header {
+    padding: 0 16px;
+  }
+  .header-meta {
+    display: none;
   }
 }
+
 
 
 
