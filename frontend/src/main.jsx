@@ -88,6 +88,8 @@ async function apiCall(path, options = {}) {
 }
 
 function Login({ onLogin }) {
+  const [isRegister, setIsRegister] = useState(false);
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('jakarta@stockflow.local');
   const [password, setPassword] = useState('admin123');
   const [showPassword, setShowPassword] = useState(false);
@@ -104,19 +106,28 @@ function Login({ onLogin }) {
     { label: 'Super Admin (Global HQ)', email: 'admin@stockflow.local', role: 'SUPER_ADMIN' }
   ];
 
-  async function handleLogin(e) {
+  async function handleSubmit(e) {
     e?.preventDefault();
     setError('');
     setLoading(true);
     try {
-      const data = await apiCall('/auth/login', {
-        method: 'POST',
-        body: JSON.stringify({ email, password })
-      });
-      localStorage.setItem('token', data.token);
-      onLogin(data.user);
+      if (isRegister) {
+        const data = await apiCall('/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({ name, email, password })
+        });
+        alert(data.message);
+        setIsRegister(false); // Back to login
+      } else {
+        const data = await apiCall('/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({ email, password })
+        });
+        localStorage.setItem('token', data.token);
+        onLogin(data.user);
+      }
     } catch (err) {
-      setError(err.message || 'Gagal masuk. Periksa kembali email & kata sandi Anda.');
+      setError(err.message || 'Gagal terhubung. Periksa kembali input Anda.');
     } finally {
       setLoading(false);
     }
@@ -201,30 +212,32 @@ function Login({ onLogin }) {
         <div className="erp-form-panel">
           <div className="login-box">
             <div className="login-box-header">
-              <h2>Masuk ke Akun Anda</h2>
-              <p>Masukkan kredensial pengguna untuk mengakses portal manajemen</p>
+              <h2>{isRegister ? 'Daftar Akun Baru' : 'Masuk ke Akun Anda'}</h2>
+              <p>{isRegister ? 'Buat akun untuk mengakses portal manajemen' : 'Masukkan kredensial pengguna untuk mengakses portal manajemen'}</p>
             </div>
 
-            {/* Quick Demo Account Selector Dropdown */}
-            <div className="quick-account-selector">
-              <label htmlFor="demo-select">
-                <span className="material-symbols-outlined">key</span> Pilih Akun Demo (Quick Login):
-              </label>
-              <div className="select-wrapper">
-                <select
-                  id="demo-select"
-                  value={email}
-                  onChange={handleSelectAccountChange}
-                >
-                  {demoAccounts.map((acc, i) => (
-                    <option key={i} value={acc.email}>
-                      {acc.label} ({acc.email})
-                    </option>
-                  ))}
-                </select>
-                <span className="material-symbols-outlined select-arrow">expand_more</span>
+            {/* Quick Demo Account Selector Dropdown - Hide on Register */}
+            {!isRegister && (
+              <div className="quick-account-selector">
+                <label htmlFor="demo-select">
+                  <span className="material-symbols-outlined">key</span> Pilih Akun Demo (Quick Login):
+                </label>
+                <div className="select-wrapper">
+                  <select
+                    id="demo-select"
+                    value={email}
+                    onChange={handleSelectAccountChange}
+                  >
+                    {demoAccounts.map((acc, i) => (
+                      <option key={i} value={acc.email}>
+                        {acc.label} ({acc.email})
+                      </option>
+                    ))}
+                  </select>
+                  <span className="material-symbols-outlined select-arrow">expand_more</span>
+                </div>
               </div>
-            </div>
+            )}
 
             {error && (
               <div className="login-error-msg">
@@ -233,7 +246,23 @@ function Login({ onLogin }) {
               </div>
             )}
 
-            <form onSubmit={handleLogin} className="login-form">
+            <form onSubmit={handleSubmit} className="login-form">
+              {isRegister && (
+                <div className="form-field">
+                  <label>Nama Lengkap</label>
+                  <div className="input-group">
+                    <span className="material-symbols-outlined input-icon">badge</span>
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={e => setName(e.target.value)}
+                      placeholder="Nama Lengkap"
+                      required
+                    />
+                  </div>
+                </div>
+              )}
+
               <div className="form-field">
                 <label>Email / User ID</label>
                 <div className="input-group">
@@ -284,12 +313,14 @@ function Login({ onLogin }) {
                 </div>
               </div>
 
-              <div className="form-extra">
-                <label className="checkbox-label">
-                  <input type="checkbox" defaultChecked />
-                  <span>Ingat saya di perangkat ini</span>
-                </label>
-              </div>
+              {!isRegister && (
+                <div className="form-extra">
+                  <label className="checkbox-label">
+                    <input type="checkbox" defaultChecked />
+                    <span>Ingat saya di perangkat ini</span>
+                  </label>
+                </div>
+              )}
 
               <button type="submit" className="login-submit-btn" disabled={loading}>
                 {loading ? (
@@ -298,11 +329,19 @@ function Login({ onLogin }) {
                   </>
                 ) : (
                   <>
-                    <span className="material-symbols-outlined">login</span> MASUK KE SISTEM
+                    <span className="material-symbols-outlined">{isRegister ? 'person_add' : 'login'}</span> {isRegister ? 'DAFTAR SEKARANG' : 'MASUK KE SISTEM'}
                   </>
                 )}
               </button>
             </form>
+
+            <div style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.9rem' }}>
+              {isRegister ? (
+                <p>Sudah punya akun? <a href="#login" onClick={(e) => { e.preventDefault(); setIsRegister(false); setError(''); }}>Masuk di sini</a></p>
+              ) : (
+                <p>Belum punya akun? <a href="#register" onClick={(e) => { e.preventDefault(); setIsRegister(true); setError(''); }}>Daftar di sini</a></p>
+              )}
+            </div>
 
             <div className="login-box-footer">
               <p>© 2026 StockFlow Pro. Hak Cipta Dilindungi Undang-Undang.</p>

@@ -128,6 +128,30 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
+app.post('/api/auth/register', async (req, res) => {
+  const { name, email, password } = req.body;
+  if (!name || !email || !password) {
+    return res.status(400).json({ message: 'Name, email, and password are required.' });
+  }
+
+  try {
+    const existingUser = await one('SELECT id FROM users WHERE email = ?', email);
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email already registered.' });
+    }
+
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    // Insert new user, defaulting role to WAREHOUSE_ADMIN and warehouse_id to 1 (Jakarta) for ease of use in demo.
+    await db.prepare('INSERT INTO users (name, email, password, role, warehouse_id, status) VALUES (?, ?, ?, ?, ?, ?)')
+      .run(name, email, hashedPassword, 'WAREHOUSE_ADMIN', 1, 'ACTIVE');
+
+    res.json({ message: 'Registration successful. Please login.' });
+  } catch (err) {
+    console.error('Register error:', err);
+    res.status(500).json({ message: 'Server registration error: ' + err.message });
+  }
+});
+
 app.get('/api/auth/me', auth, async (req, res) => {
   const u = await one('SELECT id, name, email, role, warehouse_id, status FROM users WHERE id = ?', req.user.id);
   res.json(u || req.user);
