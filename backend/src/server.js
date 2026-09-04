@@ -829,4 +829,8 @@ app.get('/api/reports/inventory.csv', auth, (req, res) => {
 
 // Start Server
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`STOCKFLOW PRO API server running on port ${PORT}`));
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => console.log(`STOCKFLOW PRO API server running on port ${PORT}`));
+}
+
+export default app;
