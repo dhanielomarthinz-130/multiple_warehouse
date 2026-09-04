@@ -410,10 +410,10 @@ function App() {
   return (
     <>
       <ToastContainer toasts={toasts} removeToast={removeToast} />
-      <div className="acumatica-layout">
-      {/* Acumatica Topbar Header */}
-      <header className="acumatica-topbar">
-        <div className="acumatica-topbar-left">
+      <div className="stockflow-layout">
+      {/* StockFlow Topbar Header */}
+      <header className="stockflow-topbar">
+        <div className="stockflow-topbar-left">
           <button
             className="btn-sidebar-toggle"
             onClick={() => setCollapsed(!collapsed)}
@@ -422,13 +422,13 @@ function App() {
             <span className="material-symbols-outlined">{collapsed ? 'menu_open' : 'menu'}</span>
           </button>
 
-          <div className="acumatica-logo">
+          <div className="stockflow-logo">
             <span className="material-symbols-outlined logo-icon">inventory_2</span>
             <span className="logo-title">STOCK FLOW <b>PRO</b></span>
           </div>
 
-          {/* Acumatica Branch / Warehouse Scope Selector */}
-          <div className="acumatica-branch-selector" title="Active Branch / Warehouse Scope">
+          {/* StockFlow Branch / Warehouse Scope Selector */}
+          <div className="stockflow-branch-selector" title="Active Branch / Warehouse Scope">
             <span className="material-symbols-outlined">domain</span>
             <span className="branch-label">Scope:</span>
             {user.role === 'SUPER_ADMIN' ? (
@@ -444,15 +444,15 @@ function App() {
           </div>
         </div>
 
-        {/* Acumatica Quick Finder / Global Search */}
-        <div className="acumatica-search-box">
+        {/* StockFlow Quick Finder / Global Search */}
+        <div className="stockflow-search-box">
           <span className="material-symbols-outlined">search</span>
           <input type="text" placeholder="Search commands, screens, or SKUs..." />
         </div>
 
-        <div className="acumatica-topbar-right">
+        <div className="stockflow-topbar-right">
           <button
-            className="acumatica-icon-btn"
+            className="stockflow-icon-btn"
             onClick={() => showToast(`System Active | Logged in as ${user.name} (${user.role})`, 'info')}
             title="System Alerts & Notifications"
           >
@@ -460,7 +460,7 @@ function App() {
           </button>
 
           <button
-            className="acumatica-icon-btn"
+            className="stockflow-icon-btn"
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
           >
@@ -468,9 +468,9 @@ function App() {
           </button>
 
           {/* User Profile Info */}
-          <div className="acumatica-user-card" title={`Logged in as ${user.name} (${user.role})`}>
+          <div className="stockflow-user-card" title={`Logged in as ${user.name} (${user.role})`}>
             <div className="avatar-circle">{user.name.charAt(0)}</div>
-            <div className="acumatica-user-meta">
+            <div className="stockflow-user-meta">
               <strong className="user-name">{user.name}</strong>
               <span className="user-role">{user.role}</span>
             </div>
@@ -478,7 +478,7 @@ function App() {
 
           {/* Logout Button */}
           <button
-            className="acumatica-icon-btn btn-logout-acumatica"
+            className="stockflow-icon-btn btn-logout-stockflow"
             onClick={() => { localStorage.clear(); setUser(null); }}
             title="Sign Out"
           >
@@ -487,10 +487,10 @@ function App() {
         </div>
       </header>
 
-      <div className="acumatica-workspace">
+      <div className="stockflow-workspace">
         {/* Left Navigation Sidebar */}
-        <aside className={`acumatica-sidebar ${collapsed ? 'collapsed' : ''}`}>
-          <nav className="acumatica-nav">
+        <aside className={`stockflow-sidebar ${collapsed ? 'collapsed' : ''}`}>
+          <nav className="stockflow-nav">
             {['MAIN OPERATIONS', 'PROCUREMENT & STOCK', 'SYSTEM & ADMIN'].map(cat => {
               const catItems = menuItems.filter(item => item.category === cat && !(item.key === 'Users' && !['SUPER_ADMIN', 'MANAGER'].includes(user.role)));
               if (catItems.length === 0) return null;
@@ -501,7 +501,7 @@ function App() {
                   {catItems.map(item => (
                     <button
                       key={item.key}
-                      className={page === item.key ? 'acumatica-nav-item active' : 'acumatica-nav-item'}
+                      className={page === item.key ? 'stockflow-nav-item active' : 'stockflow-nav-item'}
                       onClick={() => setPage(item.key)}
                       title={item.label}
                     >
@@ -526,8 +526,8 @@ function App() {
         </aside>
 
         {/* Main Content Workspace */}
-        <main className="acumatica-content">
-          <div className="acumatica-body">
+        <main className="stockflow-content">
+          <div className="stockflow-body">
             {loading ? (
               <div className="loading-state">
                 <div className="spinner"></div>
@@ -730,9 +730,9 @@ function InventoryView({ data, reload, user, selectedWarehouse }) {
 
     return (
       <div className="page-view-full" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        {/* Acumatica Screen Title Bar with Navigation Back */}
-        <div className="acumatica-title-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div className="acumatica-title-left" style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+        {/* StockFlow Screen Title Bar with Navigation Back */}
+        <div className="stockflow-title-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="stockflow-title-left" style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <button
               className="btn-secondary"
               onClick={() => setSelectedProductHistory(null)}
@@ -745,7 +745,7 @@ function InventoryView({ data, reload, user, selectedWarehouse }) {
               <h1 className="screen-main-title">Stock Movement History: {selectedProductHistory.sku}</h1>
             </div>
           </div>
-          <div className="acumatica-top-utility">
+          <div className="stockflow-top-utility">
             <button className="btn-secondary" onClick={() => openHistory(selectedProductHistory)} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
               <span className="material-symbols-outlined">refresh</span> Refresh Log History
             </button>
@@ -753,8 +753,8 @@ function InventoryView({ data, reload, user, selectedWarehouse }) {
         </div>
 
         {/* Top Summary Header Form Panel */}
-        <div className="acumatica-form-panel">
-          <div className="acumatica-form-header-title">
+        <div className="stockflow-form-panel">
+          <div className="stockflow-form-header-title">
             <span className="material-symbols-outlined">info</span> SPECIFICATIONS & CURRENT STOCK BALANCE
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', padding: '12px 0' }}>
@@ -782,14 +782,14 @@ function InventoryView({ data, reload, user, selectedWarehouse }) {
         </div>
 
         {/* Tab Header & Data Grid */}
-        <div className="acumatica-tab-wrapper">
-          <div className="acumatica-tab-header">
-            <button className="acumatica-tab-btn active">
+        <div className="stockflow-tab-wrapper">
+          <div className="stockflow-tab-header">
+            <button className="stockflow-tab-btn active">
               <span className="material-symbols-outlined" style={{ verticalAlign: 'middle', marginRight: '6px' }}>history</span>
               Document Movements & System Audit Logs
             </button>
           </div>
-          <div className="acumatica-tab-content">
+          <div className="stockflow-tab-content">
             {loadingHistory ? (
               <div className="loading-state" style={{ padding: '60px' }}>
                 <div className="spinner"></div>
@@ -839,8 +839,8 @@ function InventoryView({ data, reload, user, selectedWarehouse }) {
 
   return (
     <div className="page-view-full">
-      <div className="acumatica-title-bar">
-        <div className="acumatica-title-left">
+      <div className="stockflow-title-bar">
+        <div className="stockflow-title-left">
           <span className="screen-category">Stock Management</span>
           <h1 className="screen-main-title">Stock Inventory Status & Movement History</h1>
         </div>
@@ -1020,10 +1020,10 @@ function ProductsView({ data, reload, user }) {
   }
 
   return (
-    <div className="acumatica-screen-wrapper">
-      {/* Acumatica Screen Category & Main Title */}
-      <div className="acumatica-title-bar">
-        <div className="acumatica-title-left">
+    <div className="stockflow-screen-wrapper">
+      {/* StockFlow Screen Category & Main Title */}
+      <div className="stockflow-title-bar">
+        <div className="stockflow-title-left">
           <span className="screen-category">Master Catalog Management</span>
           <h1 className="screen-main-title">
             {selectedProduct ? `Master Product Item: ${selectedProduct.sku}` : 'Master Product Catalog & Entry Form'}
@@ -1031,22 +1031,22 @@ function ProductsView({ data, reload, user }) {
         </div>
       </div>
 
-      {/* Acumatica Primary Action Toolbar */}
-      <div className="acumatica-screen-toolbar">
-        <div className="acumatica-toolbar-left">
+      {/* StockFlow Primary Action Toolbar */}
+      <div className="stockflow-screen-toolbar">
+        <div className="stockflow-toolbar-left">
           {canEdit && (
-            <button className="acumatica-tool-btn" onClick={handleSaveProduct} title="Save Record (Ctrl+S)">
+            <button className="stockflow-tool-btn" onClick={handleSaveProduct} title="Save Record (Ctrl+S)">
               <span className="material-symbols-outlined">save</span>
             </button>
           )}
-          <button className="acumatica-tool-btn" onClick={handleResetForm} title="New / Clear Form">
+          <button className="stockflow-tool-btn" onClick={handleResetForm} title="New / Clear Form">
             <span className="material-symbols-outlined">add_box</span>
           </button>
-          <button className="acumatica-tool-btn" onClick={reload} title="Refresh Data">
+          <button className="stockflow-tool-btn" onClick={reload} title="Refresh Data">
             <span className="material-symbols-outlined">refresh</span>
           </button>
 
-          <div className="acumatica-toolbar-divider"></div>
+          <div className="stockflow-toolbar-divider"></div>
 
           {canEdit && (
             <button className="btn-release" onClick={handleSaveProduct}>
@@ -1062,14 +1062,14 @@ function ProductsView({ data, reload, user }) {
         </div>
       </div>
 
-      {/* Acumatica Summary Header Form Panel (Form Atas) */}
-      <div className="acumatica-form-panel">
-        <div className="acumatica-form-header-title">
+      {/* StockFlow Summary Header Form Panel (Form Atas) */}
+      <div className="stockflow-form-panel">
+        <div className="stockflow-form-header-title">
           <span className="material-symbols-outlined">inventory</span>
           <span>PRODUCT DETAIL ENTRY FORM</span>
         </div>
 
-        <form onSubmit={handleSaveProduct} className="acumatica-form-grid-3col">
+        <form onSubmit={handleSaveProduct} className="stockflow-form-grid-3col">
           {/* Column 1 */}
           <div className="form-col">
             <div className="form-group-compact">
@@ -1194,9 +1194,9 @@ function ProductsView({ data, reload, user }) {
         </form>
       </div>
 
-      {/* Acumatica Tab Navigation */}
-      <div className="acumatica-tabs-bar">
-        <button className="acumatica-tab-btn active">
+      {/* StockFlow Tab Navigation */}
+      <div className="stockflow-tabs-bar">
+        <button className="stockflow-tab-btn active">
           <span className="material-symbols-outlined">list_alt</span> MASTER PRODUCT CATALOG & VARIANTS
         </button>
       </div>
@@ -1541,16 +1541,16 @@ function DocumentsView({ data, reload, user }) {
 
     return (
       <div className="page-view-full" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        {/* Acumatica Screen Title Bar with Back Button */}
-        <div className="acumatica-title-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div className="acumatica-title-left">
+        {/* StockFlow Screen Title Bar with Back Button */}
+        <div className="stockflow-title-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="stockflow-title-left">
             <span className="screen-category">Procurement / Purchase Order Review</span>
             <h1 className="screen-main-title" style={{ fontSize: '15px' }}>Detail Review Purchase Order: {selectedDoc.doc_number}</h1>
           </div>
         </div>
 
         {/* Stepper Header */}
-        <div className="acumatica-form-panel">
+        <div className="stockflow-form-panel">
           <div className="workflow-stepper" style={{ padding: '16px 0' }}>
             <div className={`step-item ${selectedDoc.status !== 'DRAFT' ? 'completed' : 'active'}`}>
               <div className="circle">1</div>
@@ -1597,8 +1597,8 @@ function DocumentsView({ data, reload, user }) {
         )}
 
         {/* Top Summary Info Card */}
-        <div className="acumatica-form-panel">
-          <div className="acumatica-form-header-title">
+        <div className="stockflow-form-panel">
+          <div className="stockflow-form-header-title">
             <span className="material-symbols-outlined">info</span> SPECIFICATIONS & DOCUMENT SUMMARY
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '12px', padding: '8px 0' }}>
@@ -1632,15 +1632,15 @@ function DocumentsView({ data, reload, user }) {
         </div>
 
         {/* Item Detail Table View */}
-        <div className="acumatica-tab-wrapper">
-          <div className="acumatica-tab-header">
-            <button className="acumatica-tab-btn active">
+        <div className="stockflow-tab-wrapper">
+          <div className="stockflow-tab-header">
+            <button className="stockflow-tab-btn active">
               <span className="material-symbols-outlined" style={{ verticalAlign: 'middle', marginRight: '6px' }}>format_list_bulleted</span>
               DETAIL LIST BARANG DIBELI & SATUAN REVIEW STATUS
             </button>
           </div>
 
-          <div className="acumatica-tab-content" style={{ padding: '12px' }}>
+          <div className="stockflow-tab-content" style={{ padding: '12px' }}>
             <div className="table-responsive">
               <table className="excel-data-table">
                 <thead>
@@ -1764,10 +1764,10 @@ function DocumentsView({ data, reload, user }) {
     const totalPrice = lineItems.reduce((acc, item) => acc + ((Number(item.quantity) || 0) * (Number(item.price) || 0)), 0);
 
     return (
-      <div className="acumatica-screen-wrapper">
-        {/* Acumatica Screen Title Bar with Back Button */}
-        <div className="acumatica-title-bar">
-          <div className="acumatica-title-left" style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+      <div className="stockflow-screen-wrapper">
+        {/* StockFlow Screen Title Bar with Back Button */}
+        <div className="stockflow-title-bar">
+          <div className="stockflow-title-left" style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <button
               className="btn-secondary"
               onClick={() => setIsCreating(false)}
@@ -1783,9 +1783,9 @@ function DocumentsView({ data, reload, user }) {
         </div>
 
         {/* Header Form Card */}
-        <div className="acumatica-form-3col">
-          <div className="acumatica-form-col">
-            <div className="acumatica-form-row">
+        <div className="stockflow-form-3col">
+          <div className="stockflow-form-col">
+            <div className="stockflow-form-row">
               <label>Tipe Permintaan Pembelian:</label>
               <select
                 value={form.doc_type}
@@ -1802,7 +1802,7 @@ function DocumentsView({ data, reload, user }) {
                 <option value="PO_OPERATIONAL">PO Pembelian Barang Operasional / Perlengkapan Gudang</option>
               </select>
             </div>
-            <div className="acumatica-form-row">
+            <div className="stockflow-form-row">
               <label>No. Purchase Order (PO):</label>
               <input
                 type="text"
@@ -1821,14 +1821,14 @@ function DocumentsView({ data, reload, user }) {
                 }}
               />
             </div>
-            <div className="acumatica-form-row">
+            <div className="stockflow-form-row">
               <label>Status Dokumen PO:</label>
               <span className="status-pill pill-pending_approval" style={{ fontSize: '10px', padding: '2px 8px' }}>PENDING MANAGER APPROVAL</span>
             </div>
           </div>
 
-          <div className="acumatica-form-col">
-            <div className="acumatica-form-row">
+          <div className="stockflow-form-col">
+            <div className="stockflow-form-row">
               <label>Gudang Tujuan Penerimaan:</label>
               <select
                 value={form.warehouse_id}
@@ -1838,28 +1838,28 @@ function DocumentsView({ data, reload, user }) {
                 {(data.wh || []).map(w => <option key={w.id} value={w.id}>{w.name} ({w.city})</option>)}
               </select>
             </div>
-            <div className="acumatica-form-row">
+            <div className="stockflow-form-row">
               <label>Target Manager / Finance Approval:</label>
               <select value={form.assigned_manager_id} onChange={e => setForm({ ...form, assigned_manager_id: e.target.value })}>
                 {(data.managers || []).map(m => <option key={m.id} value={m.id}>{m.name} ({m.role})</option>)}
               </select>
             </div>
-            <div className="acumatica-form-row">
+            <div className="stockflow-form-row">
               <label>Vendor / Supplier (Penyedia Barang):</label>
               <input type="text" value={form.partner} onChange={e => setForm({ ...form, partner: e.target.value })} placeholder="e.g. PT Supplier Utama Indonesia" />
             </div>
           </div>
 
-          <div className="acumatica-totals-col">
-            <div className="acumatica-total-row">
+          <div className="stockflow-totals-col">
+            <div className="stockflow-total-row">
               <span>Total Item Baris:</span>
               <strong>{lineItems.length} Baris</strong>
             </div>
-            <div className="acumatica-total-row">
+            <div className="stockflow-total-row">
               <span>Total Qty Barang:</span>
               <strong style={{ color: 'var(--primary)' }}>{totalQty.toLocaleString()} PCS</strong>
             </div>
-            <div className="acumatica-total-row">
+            <div className="stockflow-total-row">
               <span>Total Est. Nilai (Rp):</span>
               <strong style={{ color: 'var(--success)' }}>Rp {totalPrice.toLocaleString('id-ID')}</strong>
             </div>
@@ -1867,15 +1867,15 @@ function DocumentsView({ data, reload, user }) {
         </div>
 
         {/* Multi-Line Item Entry Table */}
-        <div className="acumatica-tab-wrapper" style={{ marginTop: '16px' }}>
-          <div className="acumatica-tab-header">
-            <button className="acumatica-tab-btn active">
+        <div className="stockflow-tab-wrapper" style={{ marginTop: '16px' }}>
+          <div className="stockflow-tab-header">
+            <button className="stockflow-tab-btn active">
               <span className="material-symbols-outlined" style={{ verticalAlign: 'middle', marginRight: '6px' }}>shopping_cart</span>
               DETAIL BARANG PEMBELIAN / PURCHASE ORDER (AUTOFILL MASTER CATALOG)
             </button>
           </div>
 
-          <div className="acumatica-tab-content" style={{ padding: '12px' }}>
+          <div className="stockflow-tab-content" style={{ padding: '12px' }}>
             <div className="table-responsive">
               <table className="excel-data-table">
                 <thead>
@@ -2024,32 +2024,32 @@ function DocumentsView({ data, reload, user }) {
 
   return (
     <>
-      {/* Acumatica Screen Category & Main Title */}
-      <div className="acumatica-title-bar">
-        <div className="acumatica-title-left">
+      {/* StockFlow Screen Category & Main Title */}
+      <div className="stockflow-title-bar">
+        <div className="stockflow-title-left">
           <span className="screen-category">Procurement & Purchase Request Management</span>
           <h1 className="screen-main-title">Purchase Order (PO) & Permintaan Pembelian Tracker</h1>
         </div>
       </div>
 
-      {/* Acumatica Primary Action Toolbar */}
-      <div className="acumatica-screen-toolbar">
-        <div className="acumatica-toolbar-left">
-          <button className="acumatica-tool-btn" onClick={startCreateNewDoc} title="Buat Dokumen Transaksi Baru (+)">
+      {/* StockFlow Primary Action Toolbar */}
+      <div className="stockflow-screen-toolbar">
+        <div className="stockflow-toolbar-left">
+          <button className="stockflow-tool-btn" onClick={startCreateNewDoc} title="Buat Dokumen Transaksi Baru (+)">
             <span className="material-symbols-outlined">add_box</span>
           </button>
-          <button className="acumatica-tool-btn" onClick={reload} title="Reload Data Tracker">
+          <button className="stockflow-tool-btn" onClick={reload} title="Reload Data Tracker">
             <span className="material-symbols-outlined">refresh</span>
           </button>
         </div>
       </div>
 
-      {/* Acumatica Screen Tabs Bar */}
-      <div className="acumatica-tabs-bar">
+      {/* StockFlow Screen Tabs Bar */}
+      <div className="stockflow-tabs-bar">
         {['ALL DOCUMENTS', 'PENDING MANAGER', 'IN TRANSIT', 'APPROVED', 'REJECTED'].map(tab => (
           <button
             key={tab}
-            className={`acumatica-tab-btn ${activeTab === tab ? 'active' : ''}`}
+            className={`stockflow-tab-btn ${activeTab === tab ? 'active' : ''}`}
             onClick={() => setActiveTab(tab)}
           >
             {tab}
@@ -2204,12 +2204,12 @@ function StockOpnameView({ data, reload, user }) {
 
   return (
     <>
-      <div className="acumatica-form-panel">
-        <div className="acumatica-form-header">
+      <div className="stockflow-form-panel">
+        <div className="stockflow-form-header">
           <h3><span className="material-symbols-outlined">fact_check</span> Record Physical Stock Opname Audit</h3>
         </div>
-        <div className="acumatica-form-grid">
-          <div className="acumatica-form-row">
+        <div className="stockflow-form-grid">
+          <div className="stockflow-form-row">
             <label>Target Warehouse:</label>
             <select
               value={form.warehouse_id}
@@ -2220,14 +2220,14 @@ function StockOpnameView({ data, reload, user }) {
             </select>
           </div>
 
-          <div className="acumatica-form-row">
+          <div className="stockflow-form-row">
             <label>Product Item:</label>
             <select value={form.product_id} onChange={e => setForm({ ...form, product_id: e.target.value })}>
               {(data.products || []).map(p => <option key={p.id} value={p.id}>{p.sku} - {p.product_name}</option>)}
             </select>
           </div>
 
-          <div className="acumatica-form-row">
+          <div className="stockflow-form-row">
             <label>Actual Count Qty:</label>
             <input
               type="number"
@@ -2237,7 +2237,7 @@ function StockOpnameView({ data, reload, user }) {
             />
           </div>
 
-          <div className="acumatica-form-row">
+          <div className="stockflow-form-row">
             <label>Audit Note:</label>
             <input
               type="text"
@@ -2248,7 +2248,7 @@ function StockOpnameView({ data, reload, user }) {
           </div>
         </div>
 
-        <div className="acumatica-form-footer">
+        <div className="stockflow-form-footer">
           <button className="btn-primary" onClick={handleCreateOpname}>
             <span className="material-symbols-outlined">fact_check</span> Submit Audit Count
           </button>
@@ -3107,7 +3107,7 @@ function DataTable({ rows = [], columns = [], action, title = 'export_data', onR
   return (
     <div className="excel-grid-container" onClick={() => setActiveFilterCol(null)}>
       <div className="excel-grid-toolbar" onClick={e => e.stopPropagation()}>
-        {/* Acumatica Grid Action Buttons */}
+        {/* StockFlow Grid Action Buttons */}
         <div className="excel-grid-actions">
           {onAdd && (
             <button
@@ -3232,9 +3232,9 @@ function DataTable({ rows = [], columns = [], action, title = 'export_data', onR
                       </button>
                     </div>
 
-                    {/* Acumatica / Excel Column Filter Popover Menu */}
+                    {/* StockFlow / Excel Column Filter Popover Menu */}
                     {isMenuOpen && (
-                      <div className={`acumatica-col-popover ${isRightCol ? 'align-right' : ''}`} onClick={e => e.stopPropagation()}>
+                      <div className={`stockflow-col-popover ${isRightCol ? 'align-right' : ''}`} onClick={e => e.stopPropagation()}>
                         <div className="popover-header">
                           <span>Filter: {col.title}</span>
                           <button onClick={() => setActiveFilterCol(null)} className="popover-close">

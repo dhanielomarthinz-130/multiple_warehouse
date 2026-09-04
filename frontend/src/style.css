@@ -1,10 +1,10 @@
-/* Acumatica Cloud ERP Design System */
+/* StockFlow Cloud ERP Design System */
 :root, [data-theme="light"] {
-  --acumatica-header-bg: #ffffff;
-  --acumatica-topbar-border: #e2e8f0;
-  --acumatica-sidebar-bg: #ffffff;
-  --acumatica-accent: #0284c7;
-  --acumatica-accent-hover: #0369a1;
+  --stockflow-header-bg: #ffffff;
+  --stockflow-topbar-border: #e2e8f0;
+  --stockflow-sidebar-bg: #ffffff;
+  --stockflow-accent: #0284c7;
+  --stockflow-accent-hover: #0369a1;
 
   --primary: #0284c7;
   --primary-hover: #0369a1;
@@ -50,11 +50,11 @@
 }
 
 [data-theme="dark"] {
-  --acumatica-header-bg: #0d1726;
-  --acumatica-topbar-border: rgba(255, 255, 255, 0.08);
-  --acumatica-sidebar-bg: #0a1220;
-  --acumatica-accent: #0088ce;
-  --acumatica-accent-hover: #00a0ee;
+  --stockflow-header-bg: #0d1726;
+  --stockflow-topbar-border: rgba(255, 255, 255, 0.08);
+  --stockflow-sidebar-bg: #0a1220;
+  --stockflow-accent: #0088ce;
+  --stockflow-accent-hover: #00a0ee;
 
   --primary: #0088ce;
   --primary-hover: #006fb0;
@@ -132,8 +132,8 @@ body {
   background: #94a3b8;
 }
 
-/* Acumatica Layout Container */
-.acumatica-layout {
+/* StockFlow Layout Container */
+.stockflow-layout {
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -141,11 +141,11 @@ body {
   overflow: hidden;
 }
 
-/* Acumatica Topbar Header */
-.acumatica-topbar {
+/* StockFlow Topbar Header */
+.stockflow-topbar {
   height: 60px;
-  background: var(--acumatica-header-bg);
-  border-bottom: 1px solid var(--acumatica-topbar-border);
+  background: var(--stockflow-header-bg);
+  border-bottom: 1px solid var(--stockflow-topbar-border);
   padding: 0 20px;
   display: flex;
   align-items: center;
@@ -157,7 +157,7 @@ body {
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 
-.acumatica-topbar-left {
+.stockflow-topbar-left {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -183,30 +183,30 @@ body {
   }
 }
 
-.acumatica-logo {
+.stockflow-logo {
   display: flex;
   align-items: center;
   gap: 8px;
   white-space: nowrap;
 }
 
-.acumatica-logo .logo-icon {
+.stockflow-logo .logo-icon {
   font-size: 24px;
   color: var(--primary);
 }
 
-.acumatica-logo .logo-title {
+.stockflow-logo .logo-title {
   font-size: 16px;
   font-weight: 800;
   color: var(--text-heading);
   letter-spacing: -0.4px;
 }
 
-.acumatica-logo .logo-title b {
+.stockflow-logo .logo-title b {
   color: var(--primary);
 }
 
-.acumatica-badge {
+.stockflow-badge {
   background: var(--primary-glow);
   color: var(--primary);
   border: 1px solid var(--border-glow);
@@ -218,7 +218,7 @@ body {
   text-transform: uppercase;
 }
 
-.acumatica-branch-selector {
+.stockflow-branch-selector {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -243,7 +243,7 @@ body {
   }
 }
 
-.acumatica-search-box {
+.stockflow-search-box {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -273,13 +273,13 @@ body {
   }
 }
 
-.acumatica-topbar-right {
+.stockflow-topbar-right {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.acumatica-icon-btn {
+.stockflow-icon-btn {
   background: var(--topbar-btn-bg);
   color: var(--topbar-btn-text);
   border: 1px solid var(--topbar-btn-border);
@@ -299,7 +299,7 @@ body {
   }
 }
 
-.btn-logout-acumatica {
+.btn-logout-stockflow {
   background: rgba(244, 63, 94, 0.12) !important;
   color: #fb7185 !important;
   border-color: rgba(244, 63, 94, 0.25) !important;
@@ -311,7 +311,7 @@ body {
   }
 }
 
-.acumatica-user-card {
+.stockflow-user-card {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -321,19 +321,19 @@ body {
   border-radius: 9999px;
 }
 
-.acumatica-user-meta {
+.stockflow-user-meta {
   display: flex;
   flex-direction: column;
 }
 
-.acumatica-user-meta .user-name {
+.stockflow-user-meta .user-name {
   font-size: 12.5px;
   font-weight: 700;
   color: var(--text-heading);
   line-height: 1.2;
 }
 
-.acumatica-user-meta .user-role {
+.stockflow-user-meta .user-role {
   font-size: 9px;
   font-weight: 800;
   color: var(--primary);
@@ -341,16 +341,16 @@ body {
   letter-spacing: 0.5px;
 }
 
-/* Acumatica Workspace Container */
-.acumatica-workspace {
+/* StockFlow Workspace Container */
+.stockflow-workspace {
   display: flex;
   flex: 1;
   height: calc(100vh - 60px);
   overflow: hidden;
 }
 
-/* Acumatica Premium Sidebar Styling */
-.acumatica-sidebar {
+/* StockFlow Premium Sidebar Styling */
+.stockflow-sidebar {
   width: 220px;
   background: var(--sidebar-bg);
   border-right: 1px solid var(--sidebar-border);
@@ -364,12 +364,12 @@ body {
   box-shadow: 2px 0 12px rgba(0, 0, 0, 0.02);
 }
 
-.acumatica-sidebar.collapsed {
+.stockflow-sidebar.collapsed {
   width: 60px;
   padding: 14px 6px;
 }
 
-.acumatica-nav {
+.stockflow-nav {
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -391,7 +391,7 @@ body {
   user-select: none;
 }
 
-.acumatica-nav-item {
+.stockflow-nav-item {
   background: transparent;
   border: none;
   color: var(--sidebar-item-color);
@@ -418,28 +418,28 @@ body {
   transition: color 0.2s ease, transform 0.2s ease;
 }
 
-.acumatica-sidebar.collapsed .acumatica-nav-item {
+.stockflow-sidebar.collapsed .stockflow-nav-item {
   justify-content: center;
   padding: 8px 0;
   gap: 0;
 }
 
-.acumatica-sidebar.collapsed .nav-text {
+.stockflow-sidebar.collapsed .nav-text {
   display: none;
 }
 
-.acumatica-nav-item:hover {
+.stockflow-nav-item:hover {
   background: var(--sidebar-item-hover-bg);
   color: var(--sidebar-item-hover-color);
   transform: translateX(2px);
 }
 
-.acumatica-nav-item:hover .nav-icon {
+.stockflow-nav-item:hover .nav-icon {
   color: var(--primary);
   transform: scale(1.08);
 }
 
-.acumatica-nav-item.active {
+.stockflow-nav-item.active {
   background: linear-gradient(135deg, rgba(2, 132, 199, 0.12) 0%, rgba(2, 132, 199, 0.03) 100%);
   color: var(--primary);
   font-weight: 800;
@@ -447,7 +447,7 @@ body {
   box-shadow: inset 0 0 0 1px rgba(2, 132, 199, 0.18);
 }
 
-.acumatica-nav-item.active .nav-icon {
+.stockflow-nav-item.active .nav-icon {
   color: var(--primary);
 }
 
@@ -485,8 +485,8 @@ body {
   100% { transform: scale(0.95); opacity: 0.8; }
 }
 
-/* Acumatica Content Body & Action Bar */
-.acumatica-content {
+/* StockFlow Content Body & Action Bar */
+.stockflow-content {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -494,7 +494,7 @@ body {
   overflow: hidden;
 }
 
-.acumatica-action-bar {
+.stockflow-action-bar {
   height: 48px;
   background: var(--bg-card);
   border-bottom: 1px solid var(--border-color);
@@ -531,7 +531,7 @@ body {
   .material-symbols-outlined { font-size: 15px; }
 }
 
-.acumatica-body {
+.stockflow-body {
   flex: 1;
   padding: 20px 24px;
   overflow-y: auto;
@@ -545,27 +545,27 @@ body {
   width: 100%;
 }
 
-/* Acumatica Screen Header & Title Bar */
-.acumatica-title-bar {
+/* StockFlow Screen Header & Title Bar */
+.stockflow-title-bar {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 6px;
 }
 
-.acumatica-title-left {
+.stockflow-title-left {
   display: flex;
   flex-direction: column;
 }
 
-.acumatica-title-left .screen-category {
+.stockflow-title-left .screen-category {
   font-size: 11px;
   font-weight: 700;
   color: var(--primary);
   letter-spacing: 0.2px;
 }
 
-.acumatica-title-left .screen-main-title {
+.stockflow-title-left .screen-main-title {
   font-size: 17px;
   font-weight: 800;
   color: var(--text-heading);
@@ -573,7 +573,7 @@ body {
   margin-top: 1px;
 }
 
-.acumatica-top-utility {
+.stockflow-top-utility {
   display: flex;
   align-items: center;
   gap: 14px;
@@ -582,7 +582,7 @@ body {
   color: var(--text-muted);
 }
 
-.acumatica-top-utility .util-item {
+.stockflow-top-utility .util-item {
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -593,8 +593,8 @@ body {
   .material-symbols-outlined { font-size: 14px; }
 }
 
-/* Acumatica Screen Action Bar (Primary Top Toolbar) */
-.acumatica-screen-toolbar {
+/* StockFlow Screen Action Bar (Primary Top Toolbar) */
+.stockflow-screen-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -605,20 +605,20 @@ body {
   margin-bottom: 10px;
 }
 
-.acumatica-toolbar-left {
+.stockflow-toolbar-left {
   display: flex;
   align-items: center;
   gap: 2px;
 }
 
-.acumatica-toolbar-divider {
+.stockflow-toolbar-divider {
   width: 1px;
   height: 18px;
   background: var(--border-color);
   margin: 0 4px;
 }
 
-.acumatica-tool-btn {
+.stockflow-tool-btn {
   background: transparent;
   border: 1px solid transparent;
   color: var(--text-main);
@@ -660,8 +660,8 @@ body {
   }
 }
 
-/* Acumatica 3-Column Summary Form Layout */
-.acumatica-form-3col {
+/* StockFlow 3-Column Summary Form Layout */
+.stockflow-form-3col {
   display: grid;
   grid-template-columns: 1fr 1.2fr 0.8fr;
   gap: 12px 18px;
@@ -673,18 +673,18 @@ body {
 }
 
 @media (max-width: 1024px) {
-  .acumatica-form-3col {
+  .stockflow-form-3col {
     grid-template-columns: 1fr;
   }
 }
 
-.acumatica-form-col {
+.stockflow-form-col {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.acumatica-totals-col {
+.stockflow-totals-col {
   border-left: 1px solid var(--border-color);
   padding-left: 16px;
   display: flex;
@@ -692,7 +692,7 @@ body {
   gap: 6px;
 }
 
-.acumatica-total-row {
+.stockflow-total-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -700,14 +700,14 @@ body {
   color: var(--text-muted);
 }
 
-.acumatica-total-row strong {
+.stockflow-total-row strong {
   color: var(--text-heading);
   font-family: 'JetBrains Mono', monospace;
   font-weight: 700;
 }
 
-/* Acumatica Tab Navigation Bar */
-.acumatica-tabs-bar {
+/* StockFlow Tab Navigation Bar */
+.stockflow-tabs-bar {
   display: flex;
   align-items: center;
   gap: 20px;
@@ -716,7 +716,7 @@ body {
   padding-left: 4px;
 }
 
-.acumatica-tab-btn {
+.stockflow-tab-btn {
   background: transparent;
   border: none;
   color: var(--text-muted);
@@ -739,7 +739,7 @@ body {
   }
 }
 
-/* Acumatica Excel-Style Enterprise Data Grid */
+/* StockFlow Excel-Style Enterprise Data Grid */
 .excel-grid-container {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -1558,8 +1558,8 @@ body {
   gap: 24px;
 }
 
-/* Acumatica ERP Summary Form Header System */
-.acumatica-form-panel {
+/* StockFlow ERP Summary Form Header System */
+.stockflow-form-panel {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 6px;
@@ -1568,7 +1568,7 @@ body {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
 }
 
-.acumatica-form-header {
+.stockflow-form-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1577,7 +1577,7 @@ body {
   border-bottom: 1px solid var(--border-color);
 }
 
-.acumatica-form-header h3 {
+.stockflow-form-header h3 {
   font-size: 13.5px;
   font-weight: 800;
   color: var(--text-heading);
@@ -1587,25 +1587,25 @@ body {
   letter-spacing: -0.3px;
 }
 
-.acumatica-form-header h3 .material-symbols-outlined {
+.stockflow-form-header h3 .material-symbols-outlined {
   font-size: 18px;
   color: var(--primary);
 }
 
-.acumatica-form-grid {
+.stockflow-form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 8px 24px;
 }
 
-.acumatica-form-row {
+.stockflow-form-row {
   display: grid;
   grid-template-columns: 135px 1fr;
   align-items: center;
   gap: 8px;
 }
 
-.acumatica-form-row label {
+.stockflow-form-row label {
   font-size: 11.5px;
   font-weight: 600;
   color: var(--text-muted);
@@ -1613,15 +1613,15 @@ body {
   white-space: nowrap;
 }
 
-.acumatica-form-row input,
-.acumatica-form-row select {
+.stockflow-form-row input,
+.stockflow-form-row select {
   height: 28px;
   padding: 2px 8px;
   font-size: 12px;
   border-radius: 4px;
 }
 
-.acumatica-form-footer {
+.stockflow-form-footer {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
@@ -1630,7 +1630,7 @@ body {
   border-top: 1px solid var(--border-color);
 }
 
-/* Forms & Inputs - Compact Acumatica ERP Control */
+/* Forms & Inputs - Compact StockFlow ERP Control */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -1708,7 +1708,7 @@ input:focus, select:focus {
   align-items: center;
 }
 
-/* Buttons - Acumatica ERP Compact Styling */
+/* Buttons - StockFlow ERP Compact Styling */
 .btn-primary {
   background: var(--primary-gradient);
   color: #ffffff;
@@ -2258,8 +2258,8 @@ input:focus, select:focus {
   color: var(--text-muted);
 }
 
-/* Acumatica Summary Header Form Panel */
-.acumatica-form-panel {
+/* StockFlow Summary Header Form Panel */
+.stockflow-form-panel {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 6px;
@@ -2268,7 +2268,7 @@ input:focus, select:focus {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.acumatica-form-header-title {
+.stockflow-form-header-title {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -2282,7 +2282,7 @@ input:focus, select:focus {
   text-transform: uppercase;
 }
 
-.acumatica-form-grid-3col {
+.stockflow-form-grid-3col {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 20px;
@@ -2340,14 +2340,14 @@ input:focus, select:focus {
   font-weight: 600;
 }
 
-.acumatica-tabs-bar {
+.stockflow-tabs-bar {
   display: flex;
   gap: 2px;
   border-bottom: 2px solid var(--primary);
   margin-bottom: 12px;
 }
 
-.acumatica-tab-btn {
+.stockflow-tab-btn {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-bottom: none;
@@ -2364,13 +2364,13 @@ input:focus, select:focus {
   border-top-right-radius: 6px;
 }
 
-.acumatica-tab-btn.active {
+.stockflow-tab-btn.active {
   background: var(--primary);
   color: #ffffff;
   border-color: var(--primary);
 }
 
-/* Acumatica / Excel Column Filter Popover */
+/* StockFlow / Excel Column Filter Popover */
 .excel-th-sortable .th-content {
   display: flex;
   align-items: center;
@@ -2417,7 +2417,7 @@ input:focus, select:focus {
   background: var(--primary-glow);
 }
 
-.acumatica-col-popover {
+.stockflow-col-popover {
   position: absolute;
   top: calc(100% + 2px);
   left: 0;
@@ -2433,7 +2433,7 @@ input:focus, select:focus {
   text-align: left;
 }
 
-.acumatica-col-popover.align-right {
+.stockflow-col-popover.align-right {
   left: auto;
   right: 0;
 }
@@ -2795,7 +2795,7 @@ input:focus, select:focus {
 }
 
 /* ============================================================================
-   CLEAN WHITE / LIGHT ACUMATICA ENTERPRISE ERP LOGIN PAGE
+   CLEAN WHITE / LIGHT stockflow ENTERPRISE ERP LOGIN PAGE
    ============================================================================ */
 
 .erp-login-page {
