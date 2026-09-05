@@ -237,7 +237,6 @@ function Login({ onLogin }) {
       <main className="erp-login-body">
         {/* Left Side: Enterprise System Overview */}
         <div className="erp-hero-panel">
-          <div className="hero-badge">CLOUD ERP WORKSPACE</div>
           <h1 className="hero-title">Multi-Warehouse Operations & Authorization Portal</h1>
           <p className="hero-desc">
             Sistem manajemen persediaan terintegrasi dengan kontrol otorisasi bertingkat, pemantauan stok real-time antar gudang, serta analitik Days of Inventory (DOI).
@@ -274,10 +273,6 @@ function Login({ onLogin }) {
               </div>
             </div>
           </div>
-
-          <div className="hero-footer-info">
-            <span>Terhubung aman via SSL 256-bit • Terintegrasi dengan PostgreSQL Cloud</span>
-          </div>
         </div>
 
         {/* Right Side: Professional Clean Login Box */}
@@ -285,7 +280,7 @@ function Login({ onLogin }) {
           <div className="login-box">
             <div className="login-box-header">
               <h2>{isRegister ? 'Daftar Akun Pengguna' : 'Masuk ke Akun Anda'}</h2>
-              <p>{isRegister ? 'Tentukan peran dan akses cabang gudang untuk akun baru Anda' : 'Masukkan kredensial pengguna untuk mengakses portal manajemen'}</p>
+              {isRegister && <p>Tentukan peran dan akses cabang gudang untuk akun baru Anda</p>}
             </div>
 
             {/* Quick Demo Account Selector Dropdown - Hide on Register */}
@@ -498,10 +493,6 @@ function Login({ onLogin }) {
                   setName('');
                 }}>Daftar akun baru di sini</a></p>
               )}
-            </div>
-
-            <div className="login-box-footer">
-              <p>© 2026 StockFlow Pro. Hak Cipta Dilindungi Undang-Undang.</p>
             </div>
           </div>
         </div>
