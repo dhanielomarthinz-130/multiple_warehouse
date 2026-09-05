@@ -128,24 +128,98 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
+app.get('/api/auth/warehouses', async (req, res) => {
+  try {
+    const rows = await q("SELECT id, name, city, address, status FROM warehouses WHERE status = 'ACTIVE' ORDER BY id");
+    res.json(rows);
+  } catch (err) {
+    console.error('Fetch auth warehouses error:', err);
+    res.status(500).json({ message: 'Error fetching warehouses: ' + err.message });
+  }
+});
+
 app.post('/api/auth/register', async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, role, warehouse_id } = req.body;
   if (!name || !email || !password) {
     return res.status(400).json({ message: 'Name, email, and password are required.' });
   }
 
+  const cleanName = String(name).trim();
+  const cleanEmail = String(email).trim().toLowerCase();
+  const cleanPassword = String(password);
+
+  if (cleanName.length < 2) {
+    return res.status(400).json({ message: 'Name must be at least 2 characters.' });
+  }
+
+  if (cleanPassword.length < 6) {
+    return res.status(400).json({ message: 'Password must be at least 6 characters.' });
+  }
+
+  // Validate role
+  const ALLOWED_ROLES = ['SUPER_ADMIN', 'MANAGER', 'WAREHOUSE_ADMIN', 'OPERATOR', 'VIEWER'];
+  const assignedRole = role ? String(role).toUpperCase().trim() : 'WAREHOUSE_ADMIN';
+
+  if (!ALLOWED_ROLES.includes(assignedRole)) {
+    return res.status(400).json({
+      message: `Invalid role '${assignedRole}'. Allowed roles: ${ALLOWED_ROLES.join(', ')}`
+    });
+  }
+
+  // Validate warehouse
+  let assignedWarehouseId = null;
+  if (assignedRole === 'SUPER_ADMIN') {
+    // Super admin can be global (null) or assigned to a specific warehouse
+    if (warehouse_id && warehouse_id !== 'all' && warehouse_id !== 'null') {
+      const wh = await one('SELECT id, name, status FROM warehouses WHERE id = ?', Number(warehouse_id));
+      if (!wh || wh.status !== 'ACTIVE') {
+        return res.status(400).json({ message: 'Selected warehouse does not exist or is inactive.' });
+      }
+      assignedWarehouseId = wh.id;
+    }
+  } else {
+    // Non-SUPER_ADMIN must have a valid warehouse assigned
+    if (!warehouse_id || warehouse_id === 'all' || warehouse_id === 'null') {
+      return res.status(400).json({ message: `Warehouse selection is required for role ${assignedRole}.` });
+    }
+    const wh = await one('SELECT id, name, status FROM warehouses WHERE id = ?', Number(warehouse_id));
+    if (!wh || wh.status !== 'ACTIVE') {
+      return res.status(400).json({ message: 'Selected warehouse does not exist or is inactive.' });
+    }
+    assignedWarehouseId = wh.id;
+  }
+
   try {
-    const existingUser = await one('SELECT id FROM users WHERE email = ?', email);
+    const existingUser = await one('SELECT id FROM users WHERE LOWER(email) = ?', cleanEmail);
     if (existingUser) {
-      return res.status(400).json({ message: 'Email already registered.' });
+      return res.status(400).json({ message: 'Email already registered. Please login or use a different email.' });
     }
 
-    const hashedPassword = bcrypt.hashSync(password, 10);
-    // Insert new user, defaulting role to WAREHOUSE_ADMIN and warehouse_id to 1 (Jakarta) for ease of use in demo.
-    await db.prepare('INSERT INTO users (name, email, password, role, warehouse_id, status) VALUES (?, ?, ?, ?, ?, ?)')
-      .run(name, email, hashedPassword, 'WAREHOUSE_ADMIN', 1, 'ACTIVE');
+    const hashedPassword = bcrypt.hashSync(cleanPassword, 10);
+    const result = await db.prepare(`
+      INSERT INTO users (name, email, password, role, warehouse_id, status)
+      VALUES (?, ?, ?, ?, ?, 'ACTIVE')
+    `).run(cleanName, cleanEmail, hashedPassword, assignedRole, assignedWarehouseId);
 
-    res.json({ message: 'Registration successful. Please login.' });
+    const newUserId = result.lastInsertRowid;
+    await audit(
+      { id: newUserId, name: cleanName },
+      'REGISTER',
+      'USER',
+      newUserId,
+      `User self-registered: ${cleanEmail} (Role: ${assignedRole}, Warehouse: ${assignedWarehouseId ? 'ID ' + assignedWarehouseId : 'Global/All'})`
+    );
+
+    res.json({
+      message: 'Registration successful! You can now login with your credentials.',
+      user: {
+        id: newUserId,
+        name: cleanName,
+        email: cleanEmail,
+        role: assignedRole,
+        warehouse_id: assignedWarehouseId
+      }
+    });
   } catch (err) {
     console.error('Register error:', err);
     res.status(500).json({ message: 'Server registration error: ' + err.message });

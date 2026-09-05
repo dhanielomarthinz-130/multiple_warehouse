@@ -92,9 +92,13 @@ function Login({ onLogin }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('jakarta@stockflow.local');
   const [password, setPassword] = useState('admin123');
+  const [role, setRole] = useState('WAREHOUSE_ADMIN');
+  const [warehouseId, setWarehouseId] = useState('1');
+  const [warehouses, setWarehouses] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
 
   const demoAccounts = [
     { label: 'Admin Gudang A (Jakarta DC)', email: 'jakarta@stockflow.local', role: 'WAREHOUSE_ADMIN' },
@@ -106,18 +110,77 @@ function Login({ onLogin }) {
     { label: 'Super Admin (Global HQ)', email: 'admin@stockflow.local', role: 'SUPER_ADMIN' }
   ];
 
+  const roleOptions = [
+    { value: 'WAREHOUSE_ADMIN', label: 'Admin Gudang (Warehouse Admin)', desc: 'Mengelola persediaan, dokumen mutasi, surat jalan & transfer cabang.' },
+    { value: 'OPERATOR', label: 'Operator Gudang (Staff Lapangan)', desc: 'Pencatatan mutasi fisik, scan barang & pembuatan draft dokumen.' },
+    { value: 'MANAGER', label: 'Manager Gudang (Supervisor)', desc: 'Otorisasi persetujuan dokumen PO, approval stok opname & analitik gudang.' },
+    { value: 'SUPER_ADMIN', label: 'Super Admin (Global HQ)', desc: 'Akses penuh seluruh cabang gudang, manajemen master data & otorisasi pengguna.' },
+    { value: 'VIEWER', label: 'Viewer / Auditor (Read-Only)', desc: 'Melihat dashboard, analitik DOI dan laporan tanpa izin modifikasi data.' }
+  ];
+
+  useEffect(() => {
+    let active = true;
+    apiCall('/auth/warehouses')
+      .then(res => {
+        if (active && Array.isArray(res) && res.length > 0) {
+          setWarehouses(res);
+          setWarehouseId(String(res[0].id));
+        }
+      })
+      .catch(err => {
+        console.warn('Could not load public warehouses:', err);
+        if (active) {
+          setWarehouses([
+            { id: 1, name: 'Jakarta DC', city: 'Jakarta' },
+            { id: 2, name: 'Bekasi Hub', city: 'Bekasi' },
+            { id: 3, name: 'Makassar Hub', city: 'Makassar' }
+          ]);
+        }
+      });
+    return () => { active = false; };
+  }, []);
+
   async function handleSubmit(e) {
     e?.preventDefault();
     setError('');
+    setSuccessMsg('');
     setLoading(true);
     try {
       if (isRegister) {
+        if (!name.trim()) {
+          setError('Nama lengkap wajib diisi.');
+          setLoading(false);
+          return;
+        }
+        if (!email.trim()) {
+          setError('Email wajib diisi.');
+          setLoading(false);
+          return;
+        }
+        if (password.length < 6) {
+          setError('Kata sandi minimal 6 karakter.');
+          setLoading(false);
+          return;
+        }
+
+        const payload = {
+          name: name.trim(),
+          email: email.trim(),
+          password,
+          role,
+          warehouse_id: role === 'SUPER_ADMIN' && warehouseId === 'all' ? null : Number(warehouseId)
+        };
+
         const data = await apiCall('/auth/register', {
           method: 'POST',
-          body: JSON.stringify({ name, email, password })
+          body: JSON.stringify(payload)
         });
-        alert(data.message);
-        setIsRegister(false); // Back to login
+
+        setIsRegister(false);
+        setEmail(payload.email);
+        setPassword('');
+        setSuccessMsg(data.message || 'Pendaftaran berhasil! Silakan masuk dengan kata sandi Anda.');
+        setError('');
       } else {
         const data = await apiCall('/auth/login', {
           method: 'POST',
@@ -212,8 +275,8 @@ function Login({ onLogin }) {
         <div className="erp-form-panel">
           <div className="login-box">
             <div className="login-box-header">
-              <h2>{isRegister ? 'Daftar Akun Baru' : 'Masuk ke Akun Anda'}</h2>
-              <p>{isRegister ? 'Buat akun untuk mengakses portal manajemen' : 'Masukkan kredensial pengguna untuk mengakses portal manajemen'}</p>
+              <h2>{isRegister ? 'Daftar Akun Pengguna' : 'Masuk ke Akun Anda'}</h2>
+              <p>{isRegister ? 'Tentukan peran dan akses cabang gudang untuk akun baru Anda' : 'Masukkan kredensial pengguna untuk mengakses portal manajemen'}</p>
             </div>
 
             {/* Quick Demo Account Selector Dropdown - Hide on Register */}
@@ -239,6 +302,13 @@ function Login({ onLogin }) {
               </div>
             )}
 
+            {successMsg && (
+              <div className="login-success-msg">
+                <span className="material-symbols-outlined">check_circle</span>
+                <span>{successMsg}</span>
+              </div>
+            )}
+
             {error && (
               <div className="login-error-msg">
                 <span className="material-symbols-outlined">warning</span>
@@ -248,19 +318,80 @@ function Login({ onLogin }) {
 
             <form onSubmit={handleSubmit} className="login-form">
               {isRegister && (
-                <div className="form-field">
-                  <label>Nama Lengkap</label>
-                  <div className="input-group">
-                    <span className="material-symbols-outlined input-icon">badge</span>
-                    <input
-                      type="text"
-                      value={name}
-                      onChange={e => setName(e.target.value)}
-                      placeholder="Nama Lengkap"
-                      required
-                    />
+                <>
+                  <div className="form-field">
+                    <label>Nama Lengkap</label>
+                    <div className="input-group">
+                      <span className="material-symbols-outlined input-icon">badge</span>
+                      <input
+                        type="text"
+                        value={name}
+                        onChange={e => setName(e.target.value)}
+                        placeholder="Contoh: Budi Santoso"
+                        required
+                      />
+                    </div>
                   </div>
-                </div>
+
+                  <div className="form-field">
+                    <label>Peran & Tanggung Jawab (Role)</label>
+                    <div className="input-group">
+                      <span className="material-symbols-outlined input-icon">manage_accounts</span>
+                      <select
+                        value={role}
+                        onChange={e => {
+                          const newRole = e.target.value;
+                          setRole(newRole);
+                          if (newRole === 'SUPER_ADMIN') {
+                            setWarehouseId('all');
+                          } else if (warehouseId === 'all') {
+                            setWarehouseId(warehouses[0]?.id ? String(warehouses[0].id) : '1');
+                          }
+                        }}
+                        required
+                      >
+                        {roleOptions.map(r => (
+                          <option key={r.value} value={r.value}>{r.label}</option>
+                        ))}
+                      </select>
+                      <span className="material-symbols-outlined select-arrow">expand_more</span>
+                    </div>
+                    <div className="role-info-card">
+                      <span className="material-symbols-outlined">info</span>
+                      <span>{roleOptions.find(r => r.value === role)?.desc}</span>
+                    </div>
+                  </div>
+
+                  <div className="form-field">
+                    <label>Akses Cabang Gudang (Warehouse Assignment)</label>
+                    <div className="input-group">
+                      <span className="material-symbols-outlined input-icon">warehouse</span>
+                      <select
+                        value={warehouseId}
+                        onChange={e => setWarehouseId(e.target.value)}
+                        required
+                      >
+                        {role === 'SUPER_ADMIN' && (
+                          <option value="all">🌐 Semua Gudang (Akses Global HQ)</option>
+                        )}
+                        {warehouses.map(w => (
+                          <option key={w.id} value={w.id}>
+                            {w.name} ({w.city})
+                          </option>
+                        ))}
+                      </select>
+                      <span className="material-symbols-outlined select-arrow">expand_more</span>
+                    </div>
+                    <div className="role-info-card" style={{ background: '#f0fdf4', borderColor: '#bbf7d0', color: '#166534' }}>
+                      <span className="material-symbols-outlined" style={{ color: '#16a34a' }}>domain</span>
+                      <span>
+                        {role === 'SUPER_ADMIN' && warehouseId === 'all'
+                          ? 'Super Admin memiliki otoritas global ke seluruh cabang gudang.'
+                          : `Akses pengguna akan dibatasi khusus pada ${warehouses.find(w => String(w.id) === String(warehouseId))?.name || 'gudang terpilih'}.`}
+                      </span>
+                    </div>
+                  </div>
+                </>
               )}
 
               <div className="form-field">
@@ -280,16 +411,18 @@ function Login({ onLogin }) {
               <div className="form-field">
                 <div className="label-row">
                   <label>Kata Sandi</label>
-                  <a
-                    href="#forgot"
-                    onClick={e => {
-                      e.preventDefault();
-                      alert('Password default untuk semua akun tes adalah: admin123');
-                    }}
-                    className="forgot-password"
-                  >
-                    Lupa password?
-                  </a>
+                  {!isRegister && (
+                    <a
+                      href="#forgot"
+                      onClick={e => {
+                        e.preventDefault();
+                        alert('Password default untuk semua akun tes adalah: admin123');
+                      }}
+                      className="forgot-password"
+                    >
+                      Lupa password?
+                    </a>
+                  )}
                 </div>
                 <div className="input-group">
                   <span className="material-symbols-outlined input-icon">lock</span>
@@ -297,7 +430,7 @@ function Login({ onLogin }) {
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={e => setPassword(e.target.value)}
-                    placeholder="••••••••"
+                    placeholder={isRegister ? 'Minimal 6 karakter' : '••••••••'}
                     required
                   />
                   <button
@@ -325,11 +458,11 @@ function Login({ onLogin }) {
               <button type="submit" className="login-submit-btn" disabled={loading}>
                 {loading ? (
                   <>
-                    <span className="btn-spinner"></span> Memverifikasi...
+                    <span className="btn-spinner"></span> Memproses...
                   </>
                 ) : (
                   <>
-                    <span className="material-symbols-outlined">{isRegister ? 'person_add' : 'login'}</span> {isRegister ? 'DAFTAR SEKARANG' : 'MASUK KE SISTEM'}
+                    <span className="material-symbols-outlined">{isRegister ? 'person_add' : 'login'}</span> {isRegister ? 'DAFTAR AKUN SEKARANG' : 'MASUK KE SISTEM'}
                   </>
                 )}
               </button>
@@ -337,9 +470,24 @@ function Login({ onLogin }) {
 
             <div style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.9rem' }}>
               {isRegister ? (
-                <p>Sudah punya akun? <a href="#login" onClick={(e) => { e.preventDefault(); setIsRegister(false); setError(''); }}>Masuk di sini</a></p>
+                <p>Sudah punya akun? <a href="#login" onClick={(e) => {
+                  e.preventDefault();
+                  setIsRegister(false);
+                  setError('');
+                  setSuccessMsg('');
+                  setEmail('jakarta@stockflow.local');
+                  setPassword('admin123');
+                }}>Masuk di sini</a></p>
               ) : (
-                <p>Belum punya akun? <a href="#register" onClick={(e) => { e.preventDefault(); setIsRegister(true); setError(''); }}>Daftar di sini</a></p>
+                <p>Belum punya akun? <a href="#register" onClick={(e) => {
+                  e.preventDefault();
+                  setIsRegister(true);
+                  setError('');
+                  setSuccessMsg('');
+                  setEmail('');
+                  setPassword('');
+                  setName('');
+                }}>Daftar akun baru di sini</a></p>
               )}
             </div>
 
@@ -2787,6 +2935,7 @@ function UsersView({ data, reload, user }) {
           <option value="MANAGER">MANAGER</option>
           <option value="WAREHOUSE_ADMIN">WAREHOUSE_ADMIN</option>
           <option value="OPERATOR">OPERATOR</option>
+          <option value="VIEWER">VIEWER</option>
         </select>
       </td>
       <td>
@@ -2925,6 +3074,7 @@ function UsersView({ data, reload, user }) {
                       <option value="MANAGER">MANAGER</option>
                       <option value="WAREHOUSE_ADMIN">WAREHOUSE_ADMIN</option>
                       <option value="OPERATOR">OPERATOR</option>
+                      <option value="VIEWER">VIEWER</option>
                     </select>
                   );
                 }
