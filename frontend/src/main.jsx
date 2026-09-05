@@ -223,7 +223,7 @@ function Login({ onLogin }) {
           </div>
           <div className="logo-text">
             <span className="brand-name">STOCKFLOW <strong>PRO</strong></span>
-            <span className="brand-sub">Enterprise Multi-Warehouse ERP</span>
+            <span className="brand-sub">Enterprise Multi-Warehouse</span>
           </div>
         </div>
 
@@ -237,7 +237,10 @@ function Login({ onLogin }) {
       <main className="erp-login-body">
         {/* Left Side: Enterprise System Overview */}
         <div className="erp-hero-panel">
-          <h1 className="hero-title">Multi-Warehouse Operations & Authorization Portal</h1>
+          <h1 className="hero-title">
+            Multi-Warehouse Operations <br />
+            <span className="hero-title-highlight">&amp; Authorization Portal</span>
+          </h1>
           <p className="hero-desc">
             Sistem manajemen persediaan terintegrasi dengan kontrol otorisasi bertingkat, pemantauan stok real-time antar gudang, serta analitik Days of Inventory (DOI).
           </p>
