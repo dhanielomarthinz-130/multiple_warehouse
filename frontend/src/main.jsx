@@ -195,6 +195,7 @@ function Login({ onLogin }) {
           body: JSON.stringify({ email, password })
         });
         localStorage.setItem('token', data.token);
+        localStorage.setItem('stockflow_user', JSON.stringify(data.user));
         onLogin(data.user);
       }
     } catch (err) {
@@ -510,12 +511,28 @@ function Login({ onLogin }) {
 }
 
 function App() {
-  const [user, setUser] = useState(null);
-  const [page, setPage] = useState('Dashboard');
+  const [user, setUser] = useState(() => {
+    try {
+      const token = localStorage.getItem('token');
+      const saved = localStorage.getItem('stockflow_user');
+      if (token && saved) {
+        return JSON.parse(saved);
+      }
+    } catch {}
+    return null;
+  });
+  const [isVerifyingAuth, setIsVerifyingAuth] = useState(() => {
+    return Boolean(localStorage.getItem('token') && !localStorage.getItem('stockflow_user'));
+  });
+  const [page, setPage] = useState(() => {
+    return localStorage.getItem('stockflow_page') || 'Dashboard';
+  });
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
   const [warehouses, setWarehouses] = useState([]);
-  const [selectedWarehouse, setSelectedWarehouse] = useState('all');
+  const [selectedWarehouse, setSelectedWarehouse] = useState(() => {
+    return localStorage.getItem('stockflow_wh') || 'all';
+  });
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem('theme');
     return saved === 'dark' ? 'dark' : 'light';
@@ -544,10 +561,32 @@ function App() {
   }, [theme]);
 
   useEffect(() => {
-    if (localStorage.getItem('token')) {
+    localStorage.setItem('stockflow_wh', selectedWarehouse);
+  }, [selectedWarehouse]);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
       apiCall('/auth/me')
-        .then(setUser)
-        .catch(() => localStorage.clear());
+        .then(userData => {
+          if (userData && userData.id) {
+            setUser(userData);
+            localStorage.setItem('stockflow_user', JSON.stringify(userData));
+          }
+        })
+        .catch(err => {
+          console.warn('Session verification notice:', err.message);
+          if (err.message && (err.message.includes('401') || err.message.includes('Unauthorized') || err.message.includes('inactive'))) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('stockflow_user');
+            setUser(null);
+          }
+        })
+        .finally(() => {
+          setIsVerifyingAuth(false);
+        });
+    } else {
+      setIsVerifyingAuth(false);
     }
   }, []);
 
@@ -599,11 +638,23 @@ function App() {
     }
   }
 
+  if (isVerifyingAuth) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#f8fafc', color: '#0f172a' }}>
+        <div className="btn-spinner" style={{ width: '36px', height: '36px', borderWidth: '3px', borderColor: 'rgba(2,132,199,0.2)', borderTopColor: '#0284c7' }}></div>
+        <p style={{ marginTop: '16px', fontSize: '14px', fontWeight: 600, color: '#475569' }}>Memulihkan sesi login...</p>
+      </div>
+    );
+  }
+
   if (!user) {
     return (
       <>
         <ToastContainer toasts={toasts} removeToast={removeToast} />
-        <Login onLogin={setUser} />
+        <Login onLogin={(userData) => {
+          localStorage.setItem('stockflow_user', JSON.stringify(userData));
+          setUser(userData);
+        }} />
       </>
     );
   }
@@ -696,7 +747,12 @@ function App() {
           {/* Logout Button */}
           <button
             className="stockflow-icon-btn btn-logout-stockflow"
-            onClick={() => { localStorage.clear(); setUser(null); }}
+            onClick={() => {
+              localStorage.removeItem('token');
+              localStorage.removeItem('stockflow_user');
+              localStorage.removeItem('stockflow_page');
+              setUser(null);
+            }}
             title="Sign Out"
           >
             <span className="material-symbols-outlined">logout</span>
@@ -719,7 +775,10 @@ function App() {
                     <button
                       key={item.key}
                       className={page === item.key ? 'stockflow-nav-item active' : 'stockflow-nav-item'}
-                      onClick={() => setPage(item.key)}
+                      onClick={() => {
+                        setPage(item.key);
+                        localStorage.setItem('stockflow_page', item.key);
+                      }}
                       title={item.label}
                     >
                       <span className="material-symbols-outlined nav-icon">{item.icon}</span>
