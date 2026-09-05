@@ -63,9 +63,12 @@ function ToastContainer({ toasts, removeToast }) {
 async function apiCall(path, options = {}) {
   const token = localStorage.getItem('token');
   let res;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 20000);
   try {
     res = await fetch(API + path, {
       ...options,
+      signal: options.signal || controller.signal,
       headers: {
         'Content-Type': 'application/json',
         ...(token ? { Authorization: 'Bearer ' + token } : {}),
@@ -73,7 +76,12 @@ async function apiCall(path, options = {}) {
       }
     });
   } catch (netErr) {
+    if (netErr.name === 'AbortError') {
+      throw new Error('Permintaan ke server memakan waktu terlalu lama (Timeout). Silakan muat ulang halaman.');
+    }
     throw new Error('Gagal terhubung ke server. Periksa koneksi internet Anda.');
+  } finally {
+    clearTimeout(timeoutId);
   }
 
   if (!res.ok) {
@@ -586,8 +594,9 @@ function App() {
       }
     } catch (err) {
       showToast(err.message, 'error');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   if (!user) {

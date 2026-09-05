@@ -422,82 +422,100 @@ app.post('/api/products', auth, allow('SUPER_ADMIN', 'MANAGER', 'WAREHOUSE_ADMIN
 // ============================================================================
 
 app.get('/api/inventory', auth, async (req, res) => {
-  const targetWh = getWarehouseFilter(req);
-  const sql = `
-    SELECT i.*, p.sku, p.barcode, p.product_name, p.variant, p.category, p.brand, p.exp_date, p.batch_number, p.unit, p.retail_price, p.hpp, w.name AS warehouse,
-      COALESCE((SELECT SUM(quantity)/7.0 FROM sales_daily s WHERE s.product_id = i.product_id AND s.warehouse_id = i.warehouse_id AND s.sale_date >= date('now', '-7 day')), 0) ads7,
-      COALESCE((SELECT SUM(quantity)/30.0 FROM sales_daily s WHERE s.product_id = i.product_id AND s.warehouse_id = i.warehouse_id AND s.sale_date >= date('now', '-30 day')), 0) ads30
-    FROM inventory i
-    JOIN products p ON p.id = i.product_id
-    JOIN warehouses w ON w.id = i.warehouse_id
-    ${targetWh ? 'WHERE i.warehouse_id = ?' : ''}
-    ORDER BY p.product_name
-  `;
+  try {
+    const targetWh = getWarehouseFilter(req);
+    const sql = `
+      SELECT i.*, p.sku, p.barcode, p.product_name, 
+        COALESCE(p.variant, '') AS variant, 
+        p.category, p.brand, 
+        COALESCE(p.exp_date, '') AS exp_date, 
+        COALESCE(p.batch_number, '') AS batch_number, 
+        p.unit, 
+        COALESCE(p.retail_price, 0) AS retail_price, 
+        COALESCE(p.hpp, 0) AS hpp, 
+        w.name AS warehouse,
+        COALESCE((SELECT SUM(quantity)/7.0 FROM sales_daily s WHERE s.product_id = i.product_id AND s.warehouse_id = i.warehouse_id AND s.sale_date >= date('now', '-7 day')), 0) ads7,
+        COALESCE((SELECT SUM(quantity)/30.0 FROM sales_daily s WHERE s.product_id = i.product_id AND s.warehouse_id = i.warehouse_id AND s.sale_date >= date('now', '-30 day')), 0) ads30
+      FROM inventory i
+      JOIN products p ON p.id = i.product_id
+      JOIN warehouses w ON w.id = i.warehouse_id
+      ${targetWh ? 'WHERE i.warehouse_id = ?' : ''}
+      ORDER BY p.product_name
+    `;
 
-  let rows = await q(sql, ...(targetWh ? [targetWh] : []));
-  rows = rows.map(x => {
-    const ads7 = Number(x.ads7 || 0);
-    const ads30 = Number(x.ads30 || 0);
-    const soh = Number(x.stock_on_hand || 0);
-    return {
-      ...x,
-      ads7,
-      ads30,
-      doi7: ads7 > 0 ? +(soh / ads7).toFixed(1) : null,
-      doi30: ads30 > 0 ? +(soh / ads30).toFixed(1) : null,
-      status: ads30 === 0 ? 'NO SALES' : (soh / ads30 < 7 ? 'CRITICAL' : (soh / ads30 <= 30 ? 'HEALTHY' : (soh / ads30 <= 60 ? 'SLOW MOVING' : 'OVERSTOCK')))
-    };
-  });
+    let rows = await q(sql, ...(targetWh ? [targetWh] : []));
+    rows = rows.map(x => {
+      const ads7 = Number(x.ads7 || 0);
+      const ads30 = Number(x.ads30 || 0);
+      const soh = Number(x.stock_on_hand || 0);
+      return {
+        ...x,
+        ads7,
+        ads30,
+        doi7: ads7 > 0 ? +(soh / ads7).toFixed(1) : null,
+        doi30: ads30 > 0 ? +(soh / ads30).toFixed(1) : null,
+        status: ads30 === 0 ? 'NO SALES' : (soh / ads30 < 7 ? 'CRITICAL' : (soh / ads30 <= 30 ? 'HEALTHY' : (soh / ads30 <= 60 ? 'SLOW MOVING' : 'OVERSTOCK')))
+      };
+    });
 
-  res.json(rows);
+    res.json(rows);
+  } catch (err) {
+    console.error('Fetch inventory error:', err);
+    res.status(500).json({ message: 'Error loading inventory: ' + err.message });
+  }
 });
 
 app.get('/api/inventory/history', auth, async (req, res) => {
-  const { sku, product_id } = req.query;
-  let prod;
-  if (product_id) {
-    prod = (await q('SELECT * FROM products WHERE id = ?', product_id))[0];
-  } else if (sku) {
-    prod = (await q('SELECT * FROM products WHERE sku = ?', sku))[0];
+  try {
+    const { sku, product_id } = req.query;
+    let prod;
+    if (product_id) {
+      prod = (await q('SELECT * FROM products WHERE id = ?', product_id))[0];
+    } else if (sku) {
+      prod = (await q('SELECT * FROM products WHERE sku = ?', sku))[0];
+    }
+    if (!prod) return res.status(404).json({ message: 'Product not found.' });
+
+    const docMovements = await q(`
+      SELECT 
+        d.doc_number,
+        d.doc_type,
+        d.status,
+        d.created_at AS timestamp,
+        w.name AS warehouse_name,
+        dw.name AS dest_warehouse_name,
+        di.quantity,
+        u.name AS actor_name
+      FROM document_items di
+      JOIN documents d ON d.id = di.document_id
+      JOIN warehouses w ON w.id = d.warehouse_id
+      LEFT JOIN warehouses dw ON dw.id = d.destination_warehouse_id
+      LEFT JOIN users u ON u.id = d.created_by
+      WHERE di.product_id = ?
+      ORDER BY d.created_at DESC
+    `, prod.id);
+
+    const auditMovements = await q(`
+      SELECT 
+        a.created_at AS timestamp,
+        COALESCE(u.name, 'System') AS actor_name,
+        a.action AS doc_type,
+        a.detail AS notes
+      FROM audit_logs a
+      LEFT JOIN users u ON u.id = a.user_id
+      WHERE (a.entity = 'PRODUCT' AND a.entity_id = ?) OR a.detail LIKE ?
+      ORDER BY a.created_at DESC
+    `, String(prod.id), `%${prod.sku}%`);
+
+    res.json({
+      product: prod,
+      movements: docMovements,
+      audit: auditMovements
+    });
+  } catch (err) {
+    console.error('Inventory history error:', err);
+    res.status(500).json({ message: 'Error loading inventory history: ' + err.message });
   }
-  if (!prod) return res.status(404).json({ message: 'Product not found.' });
-
-  const docMovements = await q(`
-    SELECT 
-      d.doc_number,
-      d.doc_type,
-      d.status,
-      d.created_at AS timestamp,
-      w.name AS warehouse_name,
-      dw.name AS dest_warehouse_name,
-      di.quantity,
-      u.name AS actor_name
-    FROM document_items di
-    JOIN documents d ON d.id = di.document_id
-    JOIN warehouses w ON w.id = d.warehouse_id
-    LEFT JOIN warehouses dw ON dw.id = d.destination_warehouse_id
-    LEFT JOIN users u ON u.id = d.created_by
-    WHERE di.product_id = ?
-    ORDER BY d.created_at DESC
-  `, prod.id);
-
-  const auditMovements = await q(`
-    SELECT 
-      a.created_at AS timestamp,
-      COALESCE(u.name, 'System') AS actor_name,
-      a.action AS doc_type,
-      a.detail AS notes
-    FROM audit_logs a
-    LEFT JOIN users u ON u.id = a.user_id
-    WHERE (a.entity = 'PRODUCT' AND a.entity_id = ?) OR a.detail LIKE ?
-    ORDER BY a.created_at DESC
-  `, String(prod.id), `%${prod.sku}%`);
-
-  res.json({
-    product: prod,
-    movements: docMovements,
-    audit: auditMovements
-  });
 });
 
 // ============================================================================

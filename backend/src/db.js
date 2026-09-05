@@ -7,6 +7,27 @@ const isPg = Boolean(process.env.DATABASE_URL);
 
 let pool = null;
 let sqliteDb = null;
+let pgInitPromise = null;
+
+async function ensurePgSchema() {
+  if (!isPg || !pool) return;
+  if (!pgInitPromise) {
+    pgInitPromise = (async () => {
+      try {
+        await pool.query(`
+          ALTER TABLE products ADD COLUMN IF NOT EXISTS variant VARCHAR(100);
+          ALTER TABLE products ADD COLUMN IF NOT EXISTS exp_date VARCHAR(50);
+          ALTER TABLE products ADD COLUMN IF NOT EXISTS batch_number VARCHAR(100);
+          ALTER TABLE products ADD COLUMN IF NOT EXISTS retail_price NUMERIC(15,2) DEFAULT 0;
+          ALTER TABLE products ADD COLUMN IF NOT EXISTS hpp NUMERIC(15,2) DEFAULT 0;
+        `);
+      } catch (err) {
+        console.warn('PostgreSQL schema auto-patch notice:', err.message);
+      }
+    })();
+  }
+  await pgInitPromise;
+}
 
 if (isPg) {
   pool = new Pool({
@@ -15,6 +36,8 @@ if (isPg) {
       rejectUnauthorized: false
     }
   });
+  // Trigger initial schema patch
+  ensurePgSchema();
 } else {
   try {
     const require = createRequire(import.meta.url);
@@ -187,14 +210,17 @@ const db = {
       const pgSql = translateSqlForPg(sql);
       return {
         get: async (...args) => {
+          await ensurePgSchema();
           const res = await pool.query(pgSql, args);
           return res.rows[0] || undefined;
         },
         all: async (...args) => {
+          await ensurePgSchema();
           const res = await pool.query(pgSql, args);
           return res.rows || [];
         },
         run: async (...args) => {
+          await ensurePgSchema();
           const res = await pool.query(pgSql, args);
           const lastInsertRowid = res.rows?.[0]?.id || 0;
           return { changes: res.rowCount || 0, lastInsertRowid };
@@ -212,6 +238,7 @@ const db = {
   transaction: (fn) => {
     if (isPg) {
       return async (...args) => {
+        await ensurePgSchema();
         const client = await pool.connect();
         try {
           await client.query('BEGIN');
